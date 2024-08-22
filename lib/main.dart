@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:ingeconomica/screens/home_screen.dart';
+import 'package:ingeconomica/routes/routes.dart';
 
 void main() {
   runApp(const Myapp());
@@ -11,9 +11,11 @@ class Myapp extends StatelessWidget{
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return  MaterialApp(
         debugShowCheckedModeBanner: false,
-        home: HomeScreen(),
+        title: "Ing economica",
+        initialRoute: "/",
+        routes: routes
     );
   }
 }

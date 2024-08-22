@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
 
-class HomeScreen extends StatelessWidget{
+class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      body:  Center(child: Text("hola mundo")),
+    return Scaffold(
+      body: Center(
+          child: ElevatedButton(
+              onPressed: () {
+                Navigator.pushNamed(context, "/login");
+              },
+              child: const Text("login"))),
     );
   }
 }
