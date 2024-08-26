@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ingeconomica/screens/simple/services/interes_calculator.dart';
 
 class SimpleForms extends StatefulWidget {
   const SimpleForms({super.key});
@@ -11,17 +12,40 @@ class _SimpleFormsState extends State<SimpleForms> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _capitalController = TextEditingController();
   final TextEditingController _rateController = TextEditingController();
-  final TextEditingController _timeController = TextEditingController();
+  final TextEditingController _startDateController = TextEditingController();
+  final TextEditingController _endDateController = TextEditingController();
   double? _futureAmount;
+
+  final InterestCalculator _calculator = InterestCalculator();  // Instanciamos la clase de lógica.
 
   void _calculateFutureAmount() {
     if (_formKey.currentState!.validate()) {
       final double capital = double.parse(_capitalController.text);
       final double rate = double.parse(_rateController.text);
-      final double time = double.parse(_timeController.text);
+      final DateTime startDate = _calculator.parseDate(_startDateController.text);
+      final DateTime endDate = _calculator.parseDate(_endDateController.text);
 
       setState(() {
-        _futureAmount = capital * (1 + (rate / 100) * time);
+        _futureAmount = _calculator.calculateFutureAmount(
+          capital: capital,
+          rate: rate,
+          startDate: startDate,
+          endDate: endDate,
+        );
+      });
+    }
+  }
+
+  Future<void> _selectDate(BuildContext context, TextEditingController controller) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2101),
+    );
+    if (picked != null) {
+      setState(() {
+        controller.text = _calculator.formatDate(picked);
       });
     }
   }
@@ -46,7 +70,7 @@ class _SimpleFormsState extends State<SimpleForms> {
                 decoration: InputDecoration(
                   labelText: "Capital Inicial",
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(30.0), // Borde redondeado
+                    borderRadius: BorderRadius.circular(30.0),
                   ),
                 ),
                 validator: (value) {
@@ -63,7 +87,7 @@ class _SimpleFormsState extends State<SimpleForms> {
                 decoration: InputDecoration(
                   labelText: "Tasa de Interés (%)",
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(30.0), // Borde redondeado
+                    borderRadius: BorderRadius.circular(30.0),
                   ),
                 ),
                 validator: (value) {
@@ -75,17 +99,42 @@ class _SimpleFormsState extends State<SimpleForms> {
               ),
               const SizedBox(height: 24),
               TextFormField(
-                controller: _timeController,
-                keyboardType: TextInputType.number,
+                controller: _startDateController,
+                readOnly: true,
                 decoration: InputDecoration(
-                  labelText: "Tiempo (en años)",
+                  labelText: "Fecha de Inicio",
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(30.0), // Borde redondeado
+                    borderRadius: BorderRadius.circular(30.0),
+                  ),
+                  suffixIcon: IconButton(
+                    icon: const Icon(Icons.calendar_today),
+                    onPressed: () => _selectDate(context, _startDateController),
                   ),
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Por favor ingrese el tiempo';
+                    return 'Por favor ingrese la fecha de inicio';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 24),
+              TextFormField(
+                controller: _endDateController,
+                readOnly: true,
+                decoration: InputDecoration(
+                  labelText: "Fecha de Finalización",
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(30.0),
+                  ),
+                  suffixIcon: IconButton(
+                    icon: const Icon(Icons.calendar_today),
+                    onPressed: () => _selectDate(context, _endDateController),
+                  ),
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Por favor ingrese la fecha de finalización';
                   }
                   return null;
                 },
@@ -103,7 +152,7 @@ class _SimpleFormsState extends State<SimpleForms> {
               const SizedBox(height: 24),
               if (_futureAmount != null)
                 Text(
-                  "Monto Futuro: \$${_futureAmount!.toStringAsFixed(2)}",
+                  "Monto Futuro: ${_calculator.formatNumber(_futureAmount!)}",
                   style: const TextStyle(fontSize: 20),
                 ),
             ],
