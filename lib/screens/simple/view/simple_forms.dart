@@ -14,7 +14,11 @@ class _SimpleFormsState extends State<SimpleForms> {
   final TextEditingController _rateController = TextEditingController();
   final TextEditingController _startDateController = TextEditingController();
   final TextEditingController _endDateController = TextEditingController();
+  final TextEditingController _daysController = TextEditingController();
+  final TextEditingController _monthsController = TextEditingController();
+  final TextEditingController _yearsController = TextEditingController();
   double? _futureAmount;
+  bool _knowsExactDates = true;
 
   final InterestCalculator _calculator = InterestCalculator();  // Instanciamos la clase de lógica.
 
@@ -22,8 +26,19 @@ class _SimpleFormsState extends State<SimpleForms> {
     if (_formKey.currentState!.validate()) {
       final double capital = double.parse(_capitalController.text);
       final double rate = double.parse(_rateController.text);
-      final DateTime startDate = _calculator.parseDate(_startDateController.text);
-      final DateTime endDate = _calculator.parseDate(_endDateController.text);
+      DateTime startDate;
+      DateTime endDate;
+
+      if (_knowsExactDates) {
+        startDate = _calculator.parseDate(_startDateController.text);
+        endDate = _calculator.parseDate(_endDateController.text);
+      } else {
+        final int days = int.tryParse(_daysController.text) ?? 0;
+        final int months = int.tryParse(_monthsController.text) ?? 0;
+        final int years = int.tryParse(_yearsController.text) ?? 0;
+        startDate = DateTime.now();
+        endDate = startDate.add(Duration(days: days + months * 30 + years * 365));
+      }
 
       setState(() {
         _futureAmount = _calculator.calculateFutureAmount(
@@ -97,48 +112,93 @@ class _SimpleFormsState extends State<SimpleForms> {
                   return null;
                 },
               ),
-              const SizedBox(height: 24),
-              TextFormField(
-                controller: _startDateController,
-                readOnly: true,
-                decoration: InputDecoration(
-                  labelText: "Fecha de Inicio",
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(30.0),
-                  ),
-                  suffixIcon: IconButton(
-                    icon: const Icon(Icons.calendar_today),
-                    onPressed: () => _selectDate(context, _startDateController),
-                  ),
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Por favor ingrese la fecha de inicio';
-                  }
-                  return null;
+              const SizedBox(height: 20),
+              SwitchListTile(
+                title: const Text("¿Conoce las fechas exactas del crédito?"),
+                value: _knowsExactDates,
+                onChanged: (bool value) {
+                  setState(() {
+                    _knowsExactDates = value;
+                  });
                 },
               ),
-              const SizedBox(height: 24),
-              TextFormField(
-                controller: _endDateController,
-                readOnly: true,
-                decoration: InputDecoration(
-                  labelText: "Fecha de Finalización",
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(30.0),
+               const SizedBox(height: 20),
+              if (_knowsExactDates) ...[
+                TextFormField(
+                  controller: _startDateController,
+                  readOnly: true,
+                  decoration: InputDecoration(
+                    labelText: "Fecha de Inicio",
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30.0),
+                    ),
+                    suffixIcon: IconButton(
+                      icon: const Icon(Icons.calendar_today),
+                      onPressed: () => _selectDate(context, _startDateController),
+                    ),
                   ),
-                  suffixIcon: IconButton(
-                    icon: const Icon(Icons.calendar_today),
-                    onPressed: () => _selectDate(context, _endDateController),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Por favor ingrese la fecha de inicio';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 24),
+                TextFormField(
+                  controller: _endDateController,
+                  readOnly: true,
+                  decoration: InputDecoration(
+                    labelText: "Fecha de Finalización",
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30.0),
+                    ),
+                    suffixIcon: IconButton(
+                      icon: const Icon(Icons.calendar_today),
+                      onPressed: () => _selectDate(context, _endDateController),
+                    ),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Por favor ingrese la fecha de finalización';
+                    }
+                    return null;
+                  },
+                ),
+              ] else ...[
+                TextFormField(
+                  controller: _daysController,
+                  keyboardType: TextInputType.number,
+                  decoration: InputDecoration(
+                    labelText: "Número de Días",
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30.0),
+                    ),
                   ),
                 ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Por favor ingrese la fecha de finalización';
-                  }
-                  return null;
-                },
-              ),
+                const SizedBox(height: 24),
+                TextFormField(
+                  controller: _monthsController,
+                  keyboardType: TextInputType.number,
+                  decoration: InputDecoration(
+                    labelText: "Número de Meses",
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30.0),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 24),
+                TextFormField(
+                  controller: _yearsController,
+                  keyboardType: TextInputType.number,
+                  decoration: InputDecoration(
+                    labelText: "Número de Años",
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30.0),
+                    ),
+                  ),
+                ),
+              ],
               const SizedBox(height: 24),
               ElevatedButton(
                 onPressed: _calculateFutureAmount,
