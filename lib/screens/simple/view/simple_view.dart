@@ -43,7 +43,7 @@ class SimpleView extends StatelessWidget {
                 width: 250,
                 child: ElevatedButton.icon(
                   onPressed: () {
-                    Navigator.pushNamed(context, "/simple/form");
+                    Navigator.pushNamed(context, "/simple/interes");
                   },
                   icon: const Icon(Icons.account_balance),
                   label: const Text("Tasa Interes"),

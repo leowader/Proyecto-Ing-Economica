@@ -200,15 +200,19 @@ class _SimpleFormsState extends State<SimpleForms> {
                 ),
               ],
               const SizedBox(height: 24),
-              ElevatedButton(
-                onPressed: _calculateFutureAmount,
-                style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
-                  backgroundColor: const Color(0xFF232323),
-                  foregroundColor: Colors.white,
+               SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: _calculateFutureAmount,
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    backgroundColor: const Color(0xFF232323),
+                    foregroundColor: Colors.white,
+                  ),
+                  child: const Text("Calcular Monto Futuro"),
                 ),
-                child: const Text("Calcular Monto Futuro"),
               ),
+              
               const SizedBox(height: 24),
               if (_futureAmount != null)
                 Text(

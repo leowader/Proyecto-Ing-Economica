@@ -1,5 +1,5 @@
 import 'package:intl/intl.dart';
-
+import 'dart:math';
 class InterestCalculator {
   double calculateFutureAmount({
     required double capital,
@@ -9,6 +9,20 @@ class InterestCalculator {
   }) {
     final double time = endDate.difference(startDate).inDays / 365;
     return capital * (1 + (rate / 100) * time);
+  }
+
+ double calculateInterestRate({
+    required double futureAmount,
+    required double capital,
+    required DateTime startDate,
+    required DateTime endDate,
+  }) {
+    final int days = endDate.difference(startDate).inDays;
+    final double periodInYears = days / 365.0;
+
+    double rate = (pow(futureAmount / capital, 1 / periodInYears) - 1) * 100;
+
+    return rate;
   }
 
   String formatNumber(double number) {
