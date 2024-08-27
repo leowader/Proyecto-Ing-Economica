@@ -20,7 +20,8 @@ class _SimpleFormsState extends State<SimpleForms> {
   double? _futureAmount;
   bool _knowsExactDates = true;
 
-  final InterestCalculator _calculator = InterestCalculator();  // Instanciamos la clase de lógica.
+  final InterestCalculator _calculator =
+      InterestCalculator(); // Instanciamos la clase de lógica.
 
   void _calculateFutureAmount() {
     if (_formKey.currentState!.validate()) {
@@ -37,7 +38,8 @@ class _SimpleFormsState extends State<SimpleForms> {
         final int months = int.tryParse(_monthsController.text) ?? 0;
         final int years = int.tryParse(_yearsController.text) ?? 0;
         startDate = DateTime.now();
-        endDate = startDate.add(Duration(days: days + months * 30 + years * 365));
+        endDate =
+            startDate.add(Duration(days: days + months * 30 + years * 365));
       }
 
       setState(() {
@@ -51,7 +53,8 @@ class _SimpleFormsState extends State<SimpleForms> {
     }
   }
 
-  Future<void> _selectDate(BuildContext context, TextEditingController controller) async {
+  Future<void> _selectDate(
+      BuildContext context, TextEditingController controller) async {
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
@@ -122,7 +125,7 @@ class _SimpleFormsState extends State<SimpleForms> {
                   });
                 },
               ),
-               const SizedBox(height: 20),
+              const SizedBox(height: 20),
               if (_knowsExactDates) ...[
                 TextFormField(
                   controller: _startDateController,
@@ -134,7 +137,8 @@ class _SimpleFormsState extends State<SimpleForms> {
                     ),
                     suffixIcon: IconButton(
                       icon: const Icon(Icons.calendar_today),
-                      onPressed: () => _selectDate(context, _startDateController),
+                      onPressed: () =>
+                          _selectDate(context, _startDateController),
                     ),
                   ),
                   validator: (value) {
@@ -200,25 +204,56 @@ class _SimpleFormsState extends State<SimpleForms> {
                 ),
               ],
               const SizedBox(height: 24),
-               SizedBox(
+              SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: _calculateFutureAmount,
                   style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    padding: const EdgeInsets.all(20),
                     backgroundColor: const Color(0xFF232323),
                     foregroundColor: Colors.white,
                   ),
                   child: const Text("Calcular Monto Futuro"),
                 ),
               ),
-              
-              const SizedBox(height: 24),
+              const SizedBox(height: 20),
               if (_futureAmount != null)
-                Text(
-                  "Monto Futuro: ${_calculator.formatNumber(_futureAmount!)}",
-                  style: const TextStyle(fontSize: 20),
+
+              SizedBox(
+                  width: double.infinity,
+                  child: Align(
+                    alignment: Alignment.center,
+                    child: Container(
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF232323),
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.max,
+                        children: [
+                          const Icon(
+                            Icons.monetization_on,
+                            color: Colors.white,
+                            size: 26,
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                              child: Center(
+                            child: Text(
+                              "Monto Futuro: ${_calculator.formatNumber(_futureAmount!)}",
+                              style: const TextStyle(
+                                fontSize: 18,
+                                color: Colors.white,
+                              ),
+                            ),
+                          )),
+                        ],
+                      ),
+                    ),
+                  ),
                 ),
+               
             ],
           ),
         ),

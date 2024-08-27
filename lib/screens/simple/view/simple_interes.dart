@@ -58,7 +58,7 @@ class _SimpleInteresState extends State<SimpleInteres> {
                 child: ElevatedButton(
                   onPressed: _calculateInterestRate,
                   style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    padding: const EdgeInsets.all(20),
                     backgroundColor: const Color(0xFF232323),
                     foregroundColor: Colors.white,
                   ),
@@ -72,37 +72,31 @@ class _SimpleInteresState extends State<SimpleInteres> {
                   child: Align(
                     alignment: Alignment.center,
                     child: Container(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Card(
-                        color: const Color.fromARGB(255, 255, 255, 255),
-                        elevation: 5,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(16),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.max,
-                            children: [
-                              const Icon(
-                                Icons.monetization_on,
-                                color: Color(0xFF232323),
-                                size: 36,
-                              ),
-                              const SizedBox(width: 12),
-                              Expanded(
-                                child: Text(
-                                  'Tasa de Interés: ${_interestRate!.toStringAsFixed(2)}%',
-                                  style: const TextStyle(
-                                    fontSize: 18,
-                                    color: Color(0xFF232323),
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
-                            ],
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF232323),
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.max,
+                        children: [
+                          const Icon(
+                            Icons.monetization_on,
+                            color: Colors.white,
+                            size: 26,
                           ),
-                        ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                              child: Center(
+                            child: Text(
+                              'Tasa de Interés: ${_interestRate!.toStringAsFixed(2)}%',
+                              style: const TextStyle(
+                                fontSize: 18,
+                                color: Colors.white,
+                              ),
+                            ),
+                          )),
+                        ],
                       ),
                     ),
                   ),
