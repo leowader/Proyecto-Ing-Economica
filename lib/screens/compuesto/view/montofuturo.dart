@@ -20,6 +20,13 @@ class _MontofuturoState extends State<Montofuturo> {
   final TextEditingController _yearsController = TextEditingController();
   double? _futureAmount;
   bool _knowsExactDates = true;
+  String frecuenciaSeleccionada = 'Anual';
+  final Map<String, int> opcionesFrecuencia = {
+    'Anual': 1,
+    'Semestral': 2,
+    'Trimestral': 3,
+    'Mensual': 4
+    };
 
   final MontofuturoCalcular _calculator = MontofuturoCalcular();
 
@@ -48,6 +55,7 @@ class _MontofuturoState extends State<Montofuturo> {
           rate: rate,
           startDate: startDate,
           endDate: endDate,
+          vecesporano: 1
         );
       });
     }
@@ -98,6 +106,20 @@ class _MontofuturoState extends State<Montofuturo> {
                   return null;
                 },
               ),
+              const SizedBox(height: 24),
+              DropdownButton<String>(
+                value: frecuenciaSeleccionada,
+                items: opcionesFrecuencia.keys.map<DropdownMenuItem<String>>((String valor) {
+                  return DropdownMenuItem<String>(
+                    value: valor,
+                    child: Text(valor),
+                  );
+                }).toList(), 
+                onChanged: (String ? nuevoValor){
+                  setState(() {
+                    frecuenciaSeleccionada = nuevoValor!;
+                  });
+                }),
               const SizedBox(height: 24),
               TextFormField(
                 controller: _rateController,

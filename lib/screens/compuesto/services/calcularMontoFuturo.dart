@@ -5,10 +5,11 @@ class MontofuturoCalcular {
     required double capital,
     required double rate,
     required DateTime startDate,
+    required int vecesporano,
     required DateTime endDate,
   }) {
     final double time = endDate.difference(startDate).inDays / 365;
-    return capital * pow((1 + (rate / 100)), time);
+    return capital * pow((1 + (rate / vecesporano)), (time*vecesporano));
   }
 
  double calculateInterestRate({
