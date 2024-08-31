@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ingeconomica/screens/compuesto/view/compuesto_view.dart';
 import 'package:ingeconomica/screens/compuesto/view/montofuturo.dart';
+import 'package:ingeconomica/screens/compuesto/view/tasaInteres.dart';
 import 'package:ingeconomica/screens/home_screen.dart';
 import 'package:ingeconomica/screens/login.dart';
 import 'package:ingeconomica/screens/register.dart';
@@ -17,4 +18,5 @@ var routes = <String, WidgetBuilder>{
     "/simple/interes": (_) =>  SimpleInteres(),
   "/compuesto":(_) => CompuestoView(),
   "/compuesto/montofuturo":(_) => Montofuturo(),
+  "/compuesto/tasainteres": (_) => TasaInteres()
 };

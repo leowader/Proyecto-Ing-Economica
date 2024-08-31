@@ -26,7 +26,7 @@ class CompuestoView extends StatelessWidget {
                 width: 250, // Ancho específico para todos los botones
                 child: ElevatedButton.icon(
                   onPressed: () {
-                    Navigator.pushNamed(context, "/simple/form");
+                    Navigator.pushNamed(context, "/compuesto/montofuturo");
                   },
                   icon: const Icon(Icons.calculate),
                   label: const Text("Monto Futuro"),
@@ -43,7 +43,7 @@ class CompuestoView extends StatelessWidget {
                 width: 250,
                 child: ElevatedButton.icon(
                   onPressed: () {
-                    Navigator.pushNamed(context, "/simple/interes");
+                    Navigator.pushNamed(context, "/compuesto/tasainteres");
                   },
                   icon: const Icon(Icons.account_balance),
                   label: const Text("Tasa Interes"),

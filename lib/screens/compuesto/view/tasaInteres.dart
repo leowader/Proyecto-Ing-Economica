@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:ingeconomica/screens/compuesto/services/calcularMontoFuturo.dart';
+import 'package:ingeconomica/screens/compuesto/services/calcularTasaInteres.dart';
 
-class Montofuturo extends StatefulWidget {
-  const Montofuturo({super.key});
+
+class TasaInteres extends StatefulWidget {
+  const TasaInteres({super.key});
 
   @override
-  State<Montofuturo> createState() => _MontofuturoState();
+  State<TasaInteres> createState() => _TasaInteres();
 }
 
-class _MontofuturoState extends State<Montofuturo> {
+class _TasaInteres extends State<TasaInteres> {
   final _formKey = GlobalKey<FormState>();
+  final TextEditingController _montoFuturoController = TextEditingController();
   final TextEditingController _capitalController = TextEditingController();
-  final TextEditingController _rateController = TextEditingController();
   final TextEditingController _startDateController = TextEditingController();
   final TextEditingController _endDateController = TextEditingController();
   final TextEditingController _daysController = TextEditingController();
@@ -24,15 +25,15 @@ class _MontofuturoState extends State<Montofuturo> {
     'Anual': 1,
     'Semestral': 2,
     'Cuatrimestral': 3,
-    'Trimestral': 4    
+    'Trimestral': 4
     };
 
-  final MontofuturoCalcular _calculator = MontofuturoCalcular();
+  final InterestCalculator _calculator = InterestCalculator();
 
   void _calculateFutureAmount() {
     if (_formKey.currentState!.validate()) {
       final double capital = double.parse(_capitalController.text);
-      final double rate = double.parse(_rateController.text);
+      final double montofuturo =  double.parse(_montoFuturoController.text);
       DateTime startDate;
       DateTime endDate;
       final int veces = opcionesFrecuencia[frecuenciaSeleccionada]!;
@@ -50,12 +51,12 @@ class _MontofuturoState extends State<Montofuturo> {
       }
 
       setState(() {
-        _futureAmount = _calculator.calculateFutureAmount(
+        _futureAmount = _calculator.calculateTasaInteres(
           capital: capital,
-          rate: rate/100,
           startDate: startDate,
           endDate: endDate,
-          vecesporano: veces
+          vecesporano: veces,
+          montofuturo: montofuturo
         );
       });
     }
@@ -80,7 +81,7 @@ class _MontofuturoState extends State<Montofuturo> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Cálculo del Monto Futuro"),
+        title: const Text("Cálculo de Tasa de Interes"),
         centerTitle: true,
       ),
       body: Padding(
@@ -122,17 +123,17 @@ class _MontofuturoState extends State<Montofuturo> {
                 }),
               const SizedBox(height: 24),
               TextFormField(
-                controller: _rateController,
+                controller: _montoFuturoController,
                 keyboardType: TextInputType.number,
                 decoration: InputDecoration(
-                  labelText: "Tasa de Interés (%)",
+                  labelText: "Monto Futuro",
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(30.0),
                   ),
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Por favor ingrese la tasa de interés';
+                    return 'Por favor ingrese el monto futuro';
                   }
                   return null;
                 },
@@ -235,7 +236,7 @@ class _MontofuturoState extends State<Montofuturo> {
                     backgroundColor: const Color(0xFF232323),
                     foregroundColor: Colors.white,
                   ),
-                  child: const Text("Calcular Monto Futuro"),
+                  child: const Text("Calcular Tasa de Interes"),
                 ),
               ),
               const SizedBox(height: 20),
@@ -263,7 +264,7 @@ class _MontofuturoState extends State<Montofuturo> {
                           Expanded(
                               child: Center(
                             child: Text(
-                              "Monto Futuro: ${_calculator.formatNumber(_futureAmount!)}",
+                              "Tasa de Interes: ${_calculator.formatNumber(_futureAmount!)}%",
                               style: const TextStyle(
                                 fontSize: 18,
                                 color: Colors.white,
