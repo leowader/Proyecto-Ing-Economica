@@ -9,6 +9,7 @@ class MontofuturoCalcular {
     required DateTime endDate,
   }) {
     final double time = endDate.difference(startDate).inDays / 365;
+    print(time.floor());
     return capital * pow((1 + (rate / vecesporano)), (time*vecesporano));
   }
 

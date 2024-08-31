@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:ingeconomica/screens/compuesto/services/calcularMontoFuturo.dart';
-import 'package:ingeconomica/screens/simple/services/interes_calculator.dart';
 
 class Montofuturo extends StatefulWidget {
   const Montofuturo({super.key});
@@ -36,6 +35,7 @@ class _MontofuturoState extends State<Montofuturo> {
       final double rate = double.parse(_rateController.text);
       DateTime startDate;
       DateTime endDate;
+      final int veces = opcionesFrecuencia[frecuenciaSeleccionada]!;
 
       if (_knowsExactDates) {
         startDate = _calculator.parseDate(_startDateController.text);
@@ -52,10 +52,10 @@ class _MontofuturoState extends State<Montofuturo> {
       setState(() {
         _futureAmount = _calculator.calculateFutureAmount(
           capital: capital,
-          rate: rate,
+          rate: rate/100,
           startDate: startDate,
           endDate: endDate,
-          vecesporano: 1
+          vecesporano: veces
         );
       });
     }
