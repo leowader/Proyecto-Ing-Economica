@@ -25,7 +25,9 @@ class _TasaInteres extends State<TasaInteres> {
     'Anual': 1,
     'Semestral': 2,
     'Cuatrimestral': 3,
-    'Trimestral': 4
+    'Trimestral': 4,
+    'Bimestral':6,
+    'Mensual': 12
     };
 
   final InterestCalculator _calculator = InterestCalculator();

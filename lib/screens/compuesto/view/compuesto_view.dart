@@ -60,7 +60,7 @@ class CompuestoView extends StatelessWidget {
                 width: 250,
                 child: ElevatedButton.icon(
                   onPressed: () {
-                    // Acción para la tercera opción
+                    Navigator.pushNamed(context, "/compuesto/tiempo");
                   },
                   icon: const Icon(Icons.access_time),
                   label: const Text("Tiempo"),
