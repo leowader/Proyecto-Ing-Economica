@@ -1,5 +1,6 @@
 import 'package:intl/intl.dart';
 import 'dart:math';
+
 class InterestCalculator {
   double calculateFutureAmount({
     required double capital,
@@ -8,10 +9,11 @@ class InterestCalculator {
     required DateTime endDate,
   }) {
     final double time = endDate.difference(startDate).inDays / 365;
+    print('fecha :${time}');
     return capital * (1 + (rate / 100) * time);
   }
 
- double calculateInterestRate({
+  double calculateInterestRate({
     required double futureAmount,
     required double capital,
     required DateTime startDate,
@@ -23,6 +25,11 @@ class InterestCalculator {
     double rate = (pow(futureAmount / capital, 1 / periodInYears) - 1) * 100;
 
     return rate;
+  }
+
+  double calculateTime(
+      double interesPagado, double initialCapital, double interestRate) {
+    return (interesPagado / (initialCapital * (interestRate / 100)));
   }
 
   String formatNumber(double number) {
@@ -47,5 +54,32 @@ class InterestCalculator {
 
   String formatDate(DateTime date) {
     return DateFormat('dd/MM/yyyy').format(date);
+  }
+
+  calculateInitialCapital(
+      {required double finalCapital,
+      required double rate,
+      required DateTime startDate,
+      required int tiempo,
+      required DateTime endDate}) {
+    final tasa = rate / 100;
+    final division = ((tasa * tiempo));
+    print(double.parse(division.toStringAsFixed(1)));
+    final resultado = (finalCapital  / (tasa * tiempo));
+    return resultado;
+  }
+
+  calculateInitialCapitalPrestamo(
+      {required double finalCapital,
+      required double rate,
+      required DateTime startDate,
+      required int tiempo,
+      required DateTime endDate}) {
+    final tasa = rate / 100;
+    final division = (1 + tasa * tiempo);
+
+    final resultado =
+        (finalCapital / division);
+    return resultado;
   }
 }

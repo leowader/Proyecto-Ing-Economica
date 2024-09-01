@@ -29,7 +29,7 @@ class SimpleView extends StatelessWidget {
                     Navigator.pushNamed(context, "/simple/form");
                   },
                   icon: const Icon(Icons.calculate),
-                  label: const Text("Monto Futuro"),
+                  label: const Text("Monto"),
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(
                         vertical: 16, horizontal: 24),
@@ -60,7 +60,7 @@ class SimpleView extends StatelessWidget {
                 width: 250,
                 child: ElevatedButton.icon(
                   onPressed: () {
-                    // Acción para la tercera opción
+                    Navigator.pushNamed(context, "/simple/tiempo");
                   },
                   icon: const Icon(Icons.access_time),
                   label: const Text("Tiempo"),

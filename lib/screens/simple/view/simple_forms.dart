@@ -11,6 +11,7 @@ class SimpleForms extends StatefulWidget {
 class _SimpleFormsState extends State<SimpleForms> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _capitalController = TextEditingController();
+  final TextEditingController _finalCapitalController = TextEditingController();
   final TextEditingController _rateController = TextEditingController();
   final TextEditingController _startDateController = TextEditingController();
   final TextEditingController _endDateController = TextEditingController();
@@ -19,13 +20,16 @@ class _SimpleFormsState extends State<SimpleForms> {
   final TextEditingController _yearsController = TextEditingController();
   double? _result;
   bool _knowsExactDates = true;
-  String _selectedOption = 'Monto Futuro'; // Opción seleccionada
-
+  String _selectedOption = 'Monto futuro'; // Opción seleccionada
   final InterestCalculator _calculator = InterestCalculator();
-
   void _calculate() {
     if (_formKey.currentState!.validate()) {
-      final double capital = double.parse(_capitalController.text);
+      final double? capital = _capitalController.text.isNotEmpty
+          ? double.tryParse(_capitalController.text)
+          : null;
+      final double? finalCapital = _finalCapitalController.text.isNotEmpty
+          ? double.tryParse(_finalCapitalController.text)
+          : null;
       final double rate = double.parse(_rateController.text);
       DateTime startDate;
       DateTime endDate;
@@ -43,22 +47,63 @@ class _SimpleFormsState extends State<SimpleForms> {
       }
 
       setState(() {
-        if (_selectedOption == 'Monto Futuro') {
-          _result = _calculator.calculateFutureAmount(
-            capital: capital,
-            rate: rate,
-            startDate: startDate,
-            endDate: endDate,
-          );
-        } else if (_selectedOption == 'Interés') {
-          final futureAmount = _calculator.calculateFutureAmount(
-            capital: capital,
-            rate: rate,
-            startDate: startDate,
-            endDate: endDate,
-          );
-          _result = futureAmount -
-              capital; // Interés pagado es Monto Futuro - Capital Inicial
+        if (capital != null && finalCapital == null) {
+          if (_selectedOption == 'Monto futuro') {
+            _result = _calculator.calculateFutureAmount(
+              capital: capital,
+              rate: rate,
+              startDate: startDate,
+              endDate: endDate,
+            );
+          } else if (_selectedOption == 'Interés') {
+            final futureAmount = _calculator.calculateFutureAmount(
+              capital: capital,
+              rate: rate,
+              startDate: startDate,
+              endDate: endDate,
+            );
+            _result = futureAmount -
+                capital; // Interés pagado es Monto Futuro - Capital Inicial
+          }
+        } else if (capital == null && finalCapital != null) {
+          // Aplicar lógica para calcular el monto usando Capital Final
+          if (_selectedOption == 'Principal prestamo') {
+            _result = _calculator.calculateInitialCapitalPrestamo(
+              finalCapital: finalCapital,
+              rate: rate,
+              tiempo: int.tryParse(_yearsController.text) ??
+                  int.tryParse(_monthsController.text) ??
+                  int.tryParse(_daysController.text) ??
+                  0,
+              startDate: startDate,
+              endDate: endDate,
+            );
+          } else if (_selectedOption == 'Interés') {
+            // Si Capital Final es conocido, calcular el capital inicial
+            final initialCapital = _calculator.calculateInitialCapital(
+              finalCapital: finalCapital,
+              rate: rate,
+              tiempo: int.tryParse(_yearsController.text) ??
+                  int.tryParse(_monthsController.text) ??
+                  int.tryParse(_daysController.text) ??
+                  0,
+              startDate: startDate,
+              endDate: endDate,
+            );
+            _result = finalCapital - initialCapital;
+          } else {
+            final initialCapital = _calculator.calculateInitialCapital(
+              finalCapital: finalCapital,
+              rate: rate,
+              tiempo: int.tryParse(_yearsController.text) ??
+                  int.tryParse(_monthsController.text) ??
+                  int.tryParse(_daysController.text) ??
+                  0,
+              startDate: startDate,
+              endDate: endDate,
+            );
+            _result = initialCapital ;
+          }
         }
       });
     }
@@ -83,7 +128,7 @@ class _SimpleFormsState extends State<SimpleForms> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Cálculo del Monto Futuro"),
+        title: const Text("Cálculo del Monto"),
         centerTitle: true,
       ),
       body: Padding(
@@ -103,7 +148,24 @@ class _SimpleFormsState extends State<SimpleForms> {
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Por favor ingrese el capital inicial';
+                    return null; // Permitir que esté vacío si el Capital Final está presente
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 24),
+              TextFormField(
+                controller: _finalCapitalController,
+                keyboardType: TextInputType.number,
+                decoration: InputDecoration(
+                  labelText: "Capital Final",
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(30.0),
+                  ),
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return null; // Permitir que esté vacío si el Capital Inicial está presente
                   }
                   return null;
                 },
@@ -217,8 +279,8 @@ class _SimpleFormsState extends State<SimpleForms> {
               Container(
                 width: double.infinity,
                 decoration: BoxDecoration(
-                  color: const Color(0xFFFEF7FF), 
-                  borderRadius: BorderRadius.circular(30), 
+                  color: const Color(0xFFFEF7FF),
+                  borderRadius: BorderRadius.circular(30),
                   border: Border.all(
                     color: Colors.grey, // Color del borde
                     width: 1, // Ancho del borde
@@ -235,8 +297,12 @@ class _SimpleFormsState extends State<SimpleForms> {
                         _selectedOption = newValue!;
                       });
                     },
-                    items: <String>['Monto Futuro', 'Interés']
-                        .map<DropdownMenuItem<String>>((String value) {
+                    items: <String>[
+                      'Monto futuro',
+                      'Monto inicial',
+                      'Interés',
+                      'Principal prestamo'
+                    ].map<DropdownMenuItem<String>>((String value) {
                       return DropdownMenuItem<String>(
                         value: value,
                         child: Text(value),
