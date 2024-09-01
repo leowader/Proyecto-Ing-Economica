@@ -11,7 +11,7 @@ import 'package:ingeconomica/screens/simple/view/simple_interes.dart';
 import 'package:ingeconomica/screens/simple/view/simple_view.dart';
 
 var routes = <String, WidgetBuilder>{
-  "/": (_) => const HomeScreen(),
+  "/": (_) => const HomeScreen(username: "leowader",initialAmount: 2000000,),
   "/login": (_) => const Login(),
   "/register": (_) => const Register(),
   "/simple": (_) => const SimpleView(),

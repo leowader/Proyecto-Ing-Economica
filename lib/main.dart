@@ -12,7 +12,7 @@ class Myapp extends StatelessWidget{
     return  MaterialApp(
         debugShowCheckedModeBanner: false,
         title: "Ing economica",
-        initialRoute: "/simple",
+        initialRoute: "/",
         routes: routes
     );
   }

@@ -21,7 +21,7 @@ class _SimpleFormsState extends State<SimpleForms> {
   bool _knowsExactDates = true;
 
   final InterestCalculator _calculator =
-      InterestCalculator(); // Instanciamos la clase de lógica.
+      InterestCalculator(); 
 
   void _calculateFutureAmount() {
     if (_formKey.currentState!.validate()) {
