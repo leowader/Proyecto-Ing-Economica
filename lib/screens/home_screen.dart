@@ -124,11 +124,11 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ],
             currentIndex: _selectedIndex,
-            selectedItemColor: Color(0xFFD6D6D6), // Color of the active item
+            selectedItemColor: const Color(0xFFD6D6D6), // Color of the active item
             unselectedItemColor:
-                Color.fromARGB(255, 255, 255, 255), // Color of inactive items
+                const Color.fromARGB(255, 255, 255, 255), // Color of inactive items
             backgroundColor:
-                Color(0xFF232323), // Background color for the navbar
+                const Color(0xFF232323), // Background color for the navbar
             onTap: _onItemTapped,
             type: BottomNavigationBarType
                 .fixed, // Fixed type for evenly spaced items

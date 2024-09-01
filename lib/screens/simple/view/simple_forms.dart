@@ -17,13 +17,13 @@ class _SimpleFormsState extends State<SimpleForms> {
   final TextEditingController _daysController = TextEditingController();
   final TextEditingController _monthsController = TextEditingController();
   final TextEditingController _yearsController = TextEditingController();
-  double? _futureAmount;
+  double? _result;
   bool _knowsExactDates = true;
+  String _selectedOption = 'Monto Futuro'; // Opción seleccionada
 
-  final InterestCalculator _calculator =
-      InterestCalculator(); 
+  final InterestCalculator _calculator = InterestCalculator();
 
-  void _calculateFutureAmount() {
+  void _calculate() {
     if (_formKey.currentState!.validate()) {
       final double capital = double.parse(_capitalController.text);
       final double rate = double.parse(_rateController.text);
@@ -43,12 +43,23 @@ class _SimpleFormsState extends State<SimpleForms> {
       }
 
       setState(() {
-        _futureAmount = _calculator.calculateFutureAmount(
-          capital: capital,
-          rate: rate,
-          startDate: startDate,
-          endDate: endDate,
-        );
+        if (_selectedOption == 'Monto Futuro') {
+          _result = _calculator.calculateFutureAmount(
+            capital: capital,
+            rate: rate,
+            startDate: startDate,
+            endDate: endDate,
+          );
+        } else if (_selectedOption == 'Interés') {
+          final futureAmount = _calculator.calculateFutureAmount(
+            capital: capital,
+            rate: rate,
+            startDate: startDate,
+            endDate: endDate,
+          );
+          _result = futureAmount -
+              capital; // Interés pagado es Monto Futuro - Capital Inicial
+        }
       });
     }
   }
@@ -80,7 +91,6 @@ class _SimpleFormsState extends State<SimpleForms> {
         child: Form(
           key: _formKey,
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               TextFormField(
                 controller: _capitalController,
@@ -204,22 +214,53 @@ class _SimpleFormsState extends State<SimpleForms> {
                 ),
               ],
               const SizedBox(height: 24),
+              Container(
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: const Color(0xFFFEF7FF), 
+                  borderRadius: BorderRadius.circular(30), 
+                  border: Border.all(
+                    color: Colors.grey, // Color del borde
+                    width: 1, // Ancho del borde
+                  ),
+                ),
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                child: DropdownButtonHideUnderline(
+                  child: DropdownButton<String>(
+                    isExpanded:
+                        true, // Permite que el DropdownButton ocupe todo el ancho disponible
+                    value: _selectedOption,
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        _selectedOption = newValue!;
+                      });
+                    },
+                    items: <String>['Monto Futuro', 'Interés']
+                        .map<DropdownMenuItem<String>>((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(value),
+                      );
+                    }).toList(),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 24),
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: _calculateFutureAmount,
+                  onPressed: _calculate,
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.all(20),
                     backgroundColor: const Color(0xFF232323),
-                    foregroundColor: Colors.white,
+                    foregroundColor: const Color(0xFFFEF7FF),
                   ),
-                  child: const Text("Calcular Monto Futuro"),
+                  child: const Text("Calcular"),
                 ),
               ),
               const SizedBox(height: 20),
-              if (_futureAmount != null)
-
-              SizedBox(
+              if (_result != null)
+                SizedBox(
                   width: double.infinity,
                   child: Align(
                     alignment: Alignment.center,
@@ -239,21 +280,21 @@ class _SimpleFormsState extends State<SimpleForms> {
                           ),
                           const SizedBox(width: 12),
                           Expanded(
-                              child: Center(
-                            child: Text(
-                              "Monto Futuro: ${_calculator.formatNumber(_futureAmount!)}",
-                              style: const TextStyle(
-                                fontSize: 18,
-                                color: Colors.white,
+                            child: Center(
+                              child: Text(
+                                "$_selectedOption: ${_calculator.formatNumber(_result!)}",
+                                style: const TextStyle(
+                                  fontSize: 18,
+                                  color: Colors.white,
+                                ),
                               ),
                             ),
-                          )),
+                          ),
                         ],
                       ),
                     ),
                   ),
                 ),
-               
             ],
           ),
         ),
