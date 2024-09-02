@@ -25,9 +25,9 @@ class _MontofuturoState extends State<Montofuturo> {
     'Semestral': 2,
     'Cuatrimestral': 3,
     'Trimestral': 4,
-    'Bimestral':6,
+    'Bimestral': 6,
     'Mensual': 12
-    };
+  };
 
   final MontofuturoCalcular _calculator = MontofuturoCalcular();
 
@@ -53,12 +53,11 @@ class _MontofuturoState extends State<Montofuturo> {
 
       setState(() {
         _futureAmount = _calculator.calculateFutureAmount(
-          capital: capital,
-          rate: rate/100,
-          startDate: startDate,
-          endDate: endDate,
-          vecesporano: veces
-        );
+            capital: capital,
+            rate: rate / 100,
+            startDate: startDate,
+            endDate: endDate,
+            vecesporano: veces);
       });
     }
   }
@@ -109,19 +108,37 @@ class _MontofuturoState extends State<Montofuturo> {
                 },
               ),
               const SizedBox(height: 24),
-              DropdownButton<String>(
-                value: frecuenciaSeleccionada,
-                items: opcionesFrecuencia.keys.map<DropdownMenuItem<String>>((String valor) {
-                  return DropdownMenuItem<String>(
-                    value: valor,
-                    child: Text(valor),
-                  );
-                }).toList(), 
-                onChanged: (String ? nuevoValor){
-                  setState(() {
-                    frecuenciaSeleccionada = nuevoValor!;
-                  });
-                }),
+              Container(
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: const Color(0xFFFEF7FF),
+                  borderRadius: BorderRadius.circular(30),
+                  border: Border.all(
+                    color: Colors.grey, // Color del borde
+                    width: 1, // Ancho del borde
+                  ),
+                ),
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                child: DropdownButtonHideUnderline(
+                  child: DropdownButton<String>(
+                    isExpanded:
+                        true, // Permite que el DropdownButton ocupe todo el ancho disponible
+                    value: frecuenciaSeleccionada,
+                    onChanged: (String? nuevoValor) {
+                      setState(() {
+                        frecuenciaSeleccionada = nuevoValor!;
+                      });
+                    },
+                    items: opcionesFrecuencia.keys
+                        .map<DropdownMenuItem<String>>((String valor) {
+                      return DropdownMenuItem<String>(
+                        value: valor,
+                        child: Text(valor),
+                      );
+                    }).toList(),
+                  ),
+                ),
+              ),
               const SizedBox(height: 24),
               TextFormField(
                 controller: _rateController,
@@ -242,8 +259,7 @@ class _MontofuturoState extends State<Montofuturo> {
               ),
               const SizedBox(height: 20),
               if (_futureAmount != null)
-
-              SizedBox(
+                SizedBox(
                   width: double.infinity,
                   child: Align(
                     alignment: Alignment.center,
@@ -277,7 +293,6 @@ class _MontofuturoState extends State<Montofuturo> {
                     ),
                   ),
                 ),
-               
             ],
           ),
         ),

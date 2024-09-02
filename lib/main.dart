@@ -1,19 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_web_plugins/flutter_web_plugins.dart'; // Importa flutter_web_plugins
 import 'package:ingeconomica/routes/routes.dart';
 
 void main() {
-  runApp(const Myapp());
+  // Configura Flutter para usar la estrategia de URL sin hash.
+  setUrlStrategy(PathUrlStrategy());
+  runApp(const MyApp());
 }
-class Myapp extends StatelessWidget{
-  const Myapp({super.key});
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return  MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: "Ing economica",
-        initialRoute: "/",
-        routes: routes
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: "Ing Economica",
+      initialRoute: "/",
+      routes: routes,
     );
   }
 }
