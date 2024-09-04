@@ -38,7 +38,6 @@ var routes = <String, WidgetBuilder>{
    "/aritmetico/valorfuturo":(_) => const ValorFuturo(),
    "/aritmetico/valorpresenteinfinito":(_) => const ValorPresenteInfinito(),
    "/aritmetico/cuotaespecifica":(_) => const CuotaEspecifica(),
-  "/compuesto/tiempo": (_) => const Tiempo(),
   "/geometric/value": (_) => const GeometricValueCalculator(), // New route for Geometric Value View
   "/geometric/series": (_) => const GeometricSeriesCalculator(), // New route for Geometric Series View
 };
