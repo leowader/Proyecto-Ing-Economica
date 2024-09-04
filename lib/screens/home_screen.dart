@@ -76,7 +76,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 buildGridItem(context, "G. geométrico", Icons.functions,
                     "/geometric/value"), // Icono de funciones matemáticas
                 buildGridItem(context, "G. Aritmético", Icons.bar_chart,
-                    "/people"), // Icono de gráfico de barras
+                    "/aritmetico"), // Icono de gráfico de barras
                 buildGridItem(context, "Préstamos", Icons.monetization_on,
                     "/option5"), // Icono de moneda
                 buildGridItem(context, "Gestión de Pagos", Icons.payment,

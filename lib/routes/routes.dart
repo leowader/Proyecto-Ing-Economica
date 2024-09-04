@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:ingeconomica/screens/aritmetico/views/aritmetico_cuota_especifica.dart';
+import 'package:ingeconomica/screens/aritmetico/views/aritmetico_presente.dart';
+import 'package:ingeconomica/screens/aritmetico/views/aritmetico_presente_infinito.dart';
+import 'package:ingeconomica/screens/aritmetico/views/aritmetico_views.dart';
+import 'package:ingeconomica/screens/aritmetico/views/gradiente_aritmetico_futuro.dart';
 import 'package:ingeconomica/screens/compuesto/view/compuesto_view.dart';
 import 'package:ingeconomica/screens/compuesto/view/montofuturo.dart';
 import 'package:ingeconomica/screens/compuesto/view/tasaInteres.dart';
@@ -27,6 +32,12 @@ var routes = <String, WidgetBuilder>{
   "/compuesto": (_) => const CompuestoView(),
   "/compuesto/montofuturo": (_) => const Montofuturo(),
   "/compuesto/tasainteres": (_) => const TasaInteres(),
+  "/compuesto/tiempo": (_) => const Tiempo(),
+  "/aritmetico":(_) => const AritmeticoView(),
+   "/aritmetico/valorpresente":(_) => const ValorPresente(),
+   "/aritmetico/valorfuturo":(_) => const ValorFuturo(),
+   "/aritmetico/valorpresenteinfinito":(_) => const ValorPresenteInfinito(),
+   "/aritmetico/cuotaespecifica":(_) => const CuotaEspecifica(),
   "/compuesto/tiempo": (_) => const Tiempo(),
   "/geometric/value": (_) => const GeometricValueCalculator(), // New route for Geometric Value View
   "/geometric/series": (_) => const GeometricSeriesCalculator(), // New route for Geometric Series View
