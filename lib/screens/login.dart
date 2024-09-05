@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart'; // Importa el paquete para SVG
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -19,7 +20,6 @@ class _LoginState extends State<Login> {
     if (password == "1234") {
       Navigator.pushNamed(context, "/");
       print(cc);
-      print(password);
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Contraseña incorrecta")),
@@ -33,15 +33,16 @@ class _LoginState extends State<Login> {
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center, // Centra el contenido verticalmente
           children: <Widget>[
-           
-            Image.network(
-              'https://static.vecteezy.com/system/resources/previews/025/300/879/large_2x/3d-finance-element-icons-3d-object-for-finance-or-business-icons-free-png.png', 
-              width: 100, 
-              height: 100, 
+            Center(
+              child: SvgPicture.asset(
+                'assets/logo.svg', 
+                width: 150,
+                height: 300, 
+              ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 40), 
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -88,15 +89,18 @@ class _LoginState extends State<Login> {
             ),
             const SizedBox(height: 20),
             SizedBox(
-  width: double.infinity, // Ajusta el botón al ancho de la pantalla
-  child: ElevatedButton(
-    onPressed: _login,
-    style: ElevatedButton.styleFrom(
-      foregroundColor: Colors.white, backgroundColor: const Color.fromARGB(255, 21, 24, 26), padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 32.0), // Cambia el color del texto
-    ),
-    child: const Text("Iniciar Sesión"),
-  ),
-)
+              width: double.infinity, // Ajusta el botón al ancho de la pantalla
+              child: ElevatedButton(
+                onPressed: _login,
+                style: ElevatedButton.styleFrom(
+                  foregroundColor: Colors.white,
+                  backgroundColor: const Color.fromARGB(255, 21, 24, 26),
+                  padding: const EdgeInsets.symmetric(
+                      vertical: 16.0, horizontal: 32.0),
+                ),
+                child: const Text("Iniciar Sesión"),
+              ),
+            ),
           ],
         ),
       ),

@@ -23,7 +23,7 @@ class InterestCalculator {
     final double periodInYears = days / 365.0;
 
     double rate = (pow(futureAmount / capital, 1 / periodInYears) - 1) * 100;
-
+    print(rate);
     return rate;
   }
 
@@ -65,7 +65,7 @@ class InterestCalculator {
     final tasa = rate / 100;
     final division = ((tasa * tiempo));
     print(double.parse(division.toStringAsFixed(1)));
-    final resultado = (finalCapital  / (tasa * tiempo));
+    final resultado = (finalCapital / (tasa * tiempo));
     return resultado;
   }
 
@@ -78,8 +78,7 @@ class InterestCalculator {
     final tasa = rate / 100;
     final division = (1 + tasa * tiempo);
 
-    final resultado =
-        (finalCapital / division);
+    final resultado = (finalCapital / division);
     return resultado;
   }
 }

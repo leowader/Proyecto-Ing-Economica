@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import '../services/geometric_gradient_calculator.dart';
 
 class GeometricSeriesCalculator extends StatefulWidget {
   const GeometricSeriesCalculator({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _GeometricSeriesCalculatorState createState() =>
       _GeometricSeriesCalculatorState();
 }
@@ -26,7 +26,6 @@ class _GeometricSeriesCalculatorState extends State<GeometricSeriesCalculator> {
   final int? n = int.tryParse(_periodosController.text);
 
   if (VP_or_VF != null && G != null && i != null && n != null) {
-    final calculator = GeometricGradientCalculator();
 
     double result = 0.0;  // Initialize result with a default value
 

@@ -13,13 +13,13 @@ class _Tiempo extends State<Tiempo> {
   final TextEditingController _montoFuturoController = TextEditingController();
   final TextEditingController _rateController = TextEditingController();
   final TextEditingController _capitalController = TextEditingController();
-  final TextEditingController _startDateController = TextEditingController();
-  final TextEditingController _endDateController = TextEditingController();
-  final TextEditingController _daysController = TextEditingController();
-  final TextEditingController _monthsController = TextEditingController();
-  final TextEditingController _yearsController = TextEditingController();
+  //final TextEditingController _startDateController = TextEditingController();
+  //final TextEditingController _endDateController = TextEditingController();
+  //final TextEditingController _daysController = TextEditingController();
+  //final TextEditingController _monthsController = TextEditingController();
+  //final TextEditingController _yearsController = TextEditingController();
   double? _futureAmount;
-  bool _knowsExactDates = true;
+  //bool _knowsExactDates = true;
   String frecuenciaSeleccionada = 'Anual';
   final Map<String, int> opcionesFrecuencia = {
     'Anual': 1,

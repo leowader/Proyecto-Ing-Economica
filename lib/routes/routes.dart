@@ -28,16 +28,18 @@ var routes = <String, WidgetBuilder>{
   "/simple": (_) => const SimpleView(),
   "/simple/form": (_) => const SimpleForms(),
   "/simple/interes": (_) => const SimpleInteres(),
-   "/simple/tiempo": (_) => const SimpleTiempo(),
+  "/simple/tiempo": (_) => const SimpleTiempo(),
   "/compuesto": (_) => const CompuestoView(),
   "/compuesto/montofuturo": (_) => const Montofuturo(),
   "/compuesto/tasainteres": (_) => const TasaInteres(),
   "/compuesto/tiempo": (_) => const Tiempo(),
-  "/aritmetico":(_) => const AritmeticoView(),
-   "/aritmetico/valorpresente":(_) => const ValorPresente(),
-   "/aritmetico/valorfuturo":(_) => const ValorFuturo(),
-   "/aritmetico/valorpresenteinfinito":(_) => const ValorPresenteInfinito(),
-   "/aritmetico/cuotaespecifica":(_) => const CuotaEspecifica(),
-  "/geometric/value": (_) => const GeometricValueCalculator(), // New route for Geometric Value View
-  "/geometric/series": (_) => const GeometricSeriesCalculator(), // New route for Geometric Series View
+  "/aritmetico": (_) => const AritmeticoView(),
+  "/aritmetico/valorpresente": (_) => const ValorPresente(),
+  "/aritmetico/valorfuturo": (_) => const ValorFuturo(),
+  "/aritmetico/valorpresenteinfinito": (_) => const ValorPresenteInfinito(),
+  "/aritmetico/cuotaespecifica": (_) => const CuotaEspecifica(),
+  "/geometric/value": (_) =>
+      const GeometricValueCalculator(), 
+  "/geometric/series": (_) =>
+      const GeometricSeriesCalculator(), 
 };
