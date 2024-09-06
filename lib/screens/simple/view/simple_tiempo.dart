@@ -38,6 +38,21 @@ class _SimpleTiempoState extends State<SimpleTiempo> {
     }
   }
 
+  /// Función para convertir el tiempo en años, meses y días
+  Map<String, int> _convertTime(double timeInYears) {
+    int years = timeInYears.floor();
+    double remainingMonths = (timeInYears - years) * 12;
+    int months = remainingMonths.floor();
+    double remainingDays = (remainingMonths - months) * 30;
+    int days = remainingDays.floor();
+
+    return {
+      'years': years,
+      'months': months,
+      'days': days,
+    };
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -91,12 +106,19 @@ class _SimpleTiempoState extends State<SimpleTiempo> {
                           const SizedBox(width: 12),
                           Expanded(
                             child: Center(
-                              child: Text(
-                                'Tiempo: ${_time!.toStringAsFixed(2)} años',
-                                style: const TextStyle(
-                                  fontSize: 18,
-                                  color: Colors.white,
-                                ),
+                              child: Column(
+                                children: [
+                                  Text(
+                                    'Tiempo: ${_time!.toStringAsFixed(2)} años',
+                                    style: const TextStyle(
+                                      fontSize: 18,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  if (_time != null)
+                                    _buildTimeInYearsMonthsDays(),
+                                ],
                               ),
                             ),
                           ),
@@ -108,6 +130,18 @@ class _SimpleTiempoState extends State<SimpleTiempo> {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  /// Widget para mostrar los años, meses y días
+  Widget _buildTimeInYearsMonthsDays() {
+    final timeComponents = _convertTime(_time!);
+    return Text(
+      '${timeComponents['years']} años, ${timeComponents['months']} meses, ${timeComponents['days']} días',
+      style: const TextStyle(
+        fontSize: 18,
+        color: Colors.white,
       ),
     );
   }

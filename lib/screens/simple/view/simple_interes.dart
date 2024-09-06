@@ -52,7 +52,7 @@ class _SimpleInteresState extends State<SimpleInteres> {
       final months = int.tryParse(_monthController.text) ?? 0;
       final years = int.tryParse(_yearController.text) ?? 0;
 
-      timeInYears = years + (months / 12.0) + (days / 360.0);
+      timeInYears = years + (months / 12) + (days / 360);
       if (interesGenerado != null && initialCapital > 0) {
         final i = (interesGenerado / (initialCapital * timeInYears)) *100;
         print(i);
@@ -98,7 +98,6 @@ class _SimpleInteresState extends State<SimpleInteres> {
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
-            mainAxisSize: MainAxisSize.min,
             children: [
               _buildTextField(_futureAmountController, 'Monto Futuro'),
               const SizedBox(height: 24),

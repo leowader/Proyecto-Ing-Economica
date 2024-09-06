@@ -16,7 +16,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: "Ing Economica",
-      initialRoute: "/login",
+      initialRoute: "/",
       routes: routes,
     );
   }
