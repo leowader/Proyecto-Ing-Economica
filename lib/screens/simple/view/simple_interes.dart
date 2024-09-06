@@ -54,12 +54,12 @@ class _SimpleInteresState extends State<SimpleInteres> {
 
       timeInYears = years + (months / 12) + (days / 360);
       if (interesGenerado != null && initialCapital > 0) {
-        final i = (interesGenerado / (initialCapital * timeInYears)) *100;
+        final i = (interesGenerado / (initialCapital * timeInYears)) * 100;
         print(i);
-        print("calcula aquiiiii" );
-         setState(() {
-        _interestRate = i as double?;
-      });
+        print("calcula aquiiiii");
+        setState(() {
+          _interestRate = i as double?;
+        });
       }
     }
 
@@ -69,7 +69,7 @@ class _SimpleInteresState extends State<SimpleInteres> {
       setState(() {
         _interestRate = rate as double?;
       });
-    } 
+    }
   }
 
   Future<void> _selectDate(
@@ -90,72 +90,78 @@ class _SimpleInteresState extends State<SimpleInteres> {
 
   @override
   Widget build(BuildContext context) {
+    // Obtenemos el tamaño de la pantalla
+    final screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
       appBar: AppBar(
         title: const Text('Tasa de Interés'),
       ),
-      body: Center(
+      body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
-          child: Column(
-            children: [
-              _buildTextField(_futureAmountController, 'Monto Futuro'),
-              const SizedBox(height: 24),
-              _buildTextField(_initialCapitalController, 'Capital Inicial'),
-              const SizedBox(height: 24),
-              _buildTextField(_interesGenradoController, 'interes generado'),
-              const SizedBox(height: 24),
-              _buildDateOptions(), // Muestra las opciones para ingresar fechas o tiempo
-              const SizedBox(height: 24),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: _calculateInterestRate,
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.all(20),
-                    backgroundColor: const Color(0xFF232323),
-                    foregroundColor: Colors.white,
-                  ),
-                  child: const Text("Calcular Tasa de Interés"),
-                ),
-              ),
-              const SizedBox(height: 24),
-              if (_interestRate != null)
+          child: ConstrainedBox(
+            constraints: BoxConstraints(minHeight: screenHeight),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildTextField(_futureAmountController, 'Monto Futuro'),
+                const SizedBox(height: 24),
+                _buildTextField(_initialCapitalController, 'Capital Inicial'),
+                const SizedBox(height: 24),
+                _buildTextField(_interesGenradoController, 'Interés Generado'),
+                const SizedBox(height: 24),
+                _buildDateOptions(), // Muestra las opciones para ingresar fechas o tiempo
+                const SizedBox(height: 24),
                 SizedBox(
                   width: double.infinity,
-                  child: Align(
-                    alignment: Alignment.center,
-                    child: Container(
-                      padding: const EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF232323),
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.max,
-                        children: [
-                          const Icon(
-                            Icons.monetization_on,
-                            color: Colors.white,
-                            size: 26,
-                          ),
-                          const SizedBox(width: 12),
-                          Expanded(
-                              child: Center(
-                            child: Text(
-                              'Tasa de Interés: ${_interestRate!.toStringAsFixed(2)}%',
-                              style: const TextStyle(
-                                fontSize: 18,
-                                color: Colors.white,
-                              ),
+                  child: ElevatedButton(
+                    onPressed: _calculateInterestRate,
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.all(20),
+                      backgroundColor: const Color(0xFF232323),
+                      foregroundColor: Colors.white,
+                    ),
+                    child: const Text("Calcular Tasa de Interés"),
+                  ),
+                ),
+                const SizedBox(height: 24),
+                if (_interestRate != null)
+                  SizedBox(
+                    width: double.infinity,
+                    child: Align(
+                      alignment: Alignment.center,
+                      child: Container(
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF232323),
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.max,
+                          children: [
+                            const Icon(
+                              Icons.monetization_on,
+                              color: Colors.white,
+                              size: 26,
                             ),
-                          )),
-                        ],
+                            const SizedBox(width: 12),
+                            Expanded(
+                                child: Center(
+                              child: Text(
+                                'Tasa de Interés: ${_interestRate!.toStringAsFixed(2)}%',
+                                style: const TextStyle(
+                                  fontSize: 18,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            )),
+                          ],
+                        ),
                       ),
                     ),
                   ),
-                ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
