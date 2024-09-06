@@ -5,7 +5,6 @@ class SimpleTiempo extends StatefulWidget {
   const SimpleTiempo({super.key});
 
   @override
-  // ignore: library_private_types_in_public_api
   _SimpleTiempoState createState() => _SimpleTiempoState();
 }
 
@@ -13,21 +12,32 @@ class _SimpleTiempoState extends State<SimpleTiempo> {
   final _interesPagadoController = TextEditingController();
   final _initialCapitalController = TextEditingController();
   final _interestRateController = TextEditingController();
+  final _finalCapitalController = TextEditingController();
   double? _time;
+  String _selectedView = 'Todos'; // Control de la vista seleccionada
 
   final InterestCalculator _calculator = InterestCalculator();
 
   void _calculateTime() {
     final interesPagado = double.tryParse(_interesPagadoController.text);
     final initialCapital = double.tryParse(_initialCapitalController.text);
+    final finalCapital = double.tryParse(_finalCapitalController.text);
     final interestRate = double.tryParse(_interestRateController.text);
 
-    if (interesPagado != null &&
+    double? calculatedInterest;
+
+    if (interesPagado == null && finalCapital != null && initialCapital != null) {
+      calculatedInterest = finalCapital - initialCapital;
+    } else {
+      calculatedInterest = interesPagado;
+    }
+
+    if (calculatedInterest != null &&
         initialCapital != null &&
         interestRate != null &&
         interestRate != 0) {
       final time = _calculator.calculateTime(
-          interesPagado, initialCapital, interestRate);
+          calculatedInterest, initialCapital, interestRate);
       setState(() {
         _time = time;
       });
@@ -38,7 +48,6 @@ class _SimpleTiempoState extends State<SimpleTiempo> {
     }
   }
 
-  /// Función para convertir el tiempo en años, meses y días
   Map<String, int> _convertTime(double timeInYears) {
     int years = timeInYears.floor();
     double remainingMonths = (timeInYears - years) * 12;
@@ -69,8 +78,40 @@ class _SimpleTiempoState extends State<SimpleTiempo> {
               const SizedBox(height: 24),
               _buildTextField(_initialCapitalController, 'Capital Inicial'),
               const SizedBox(height: 24),
+              _buildTextField(_finalCapitalController, 'Capital Final'),
+              const SizedBox(height: 24),
               _buildTextField(_interestRateController, 'Tasa de Interés (%)'),
               const SizedBox(height: 24),
+              
+              // Dropdown para seleccionar la vista
+              DropdownButton<String>(
+                value: _selectedView,
+                items: const [
+                  DropdownMenuItem(
+                    value: 'Todos',
+                    child: Text('Todos'),
+                  ),
+                  DropdownMenuItem(
+                    value: 'Años',
+                    child: Text('Años'),
+                  ),
+                  DropdownMenuItem(
+                    value: 'Meses',
+                    child: Text('Meses'),
+                  ),
+                  DropdownMenuItem(
+                    value: 'Días',
+                    child: Text('Días'),
+                  ),
+                ],
+                onChanged: (value) {
+                  setState(() {
+                    _selectedView = value!;
+                  });
+                },
+              ),
+              const SizedBox(height: 24),
+              
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
@@ -117,7 +158,7 @@ class _SimpleTiempoState extends State<SimpleTiempo> {
                                   ),
                                   const SizedBox(height: 8),
                                   if (_time != null)
-                                    _buildTimeInYearsMonthsDays(),
+                                    _buildTimeInSelectedView(),
                                 ],
                               ),
                             ),
@@ -134,16 +175,44 @@ class _SimpleTiempoState extends State<SimpleTiempo> {
     );
   }
 
-  /// Widget para mostrar los años, meses y días
-  Widget _buildTimeInYearsMonthsDays() {
+  /// Widget para mostrar el tiempo según la selección del usuario
+  Widget _buildTimeInSelectedView() {
     final timeComponents = _convertTime(_time!);
-    return Text(
-      '${timeComponents['years']} años, ${timeComponents['months']} meses, ${timeComponents['days']} días',
-      style: const TextStyle(
-        fontSize: 18,
-        color: Colors.white,
-      ),
-    );
+    
+    switch (_selectedView) {
+      case 'Años':
+        return Text(
+          '${timeComponents['years']} años',
+          style: const TextStyle(
+            fontSize: 18,
+            color: Colors.white,
+          ),
+        );
+      case 'Meses':
+        return Text(
+          '${timeComponents['months']} meses',
+          style: const TextStyle(
+            fontSize: 18,
+            color: Colors.white,
+          ),
+        );
+      case 'Días':
+        return Text(
+          '${timeComponents['days']} días',
+          style: const TextStyle(
+            fontSize: 18,
+            color: Colors.white,
+          ),
+        );
+      default:
+        return Text(
+          '${timeComponents['years']} años, ${timeComponents['months']} meses, ${timeComponents['days']} días',
+          style: const TextStyle(
+            fontSize: 18,
+            color: Colors.white,
+          ),
+        );
+    }
   }
 
   Widget _buildTextField(TextEditingController controller, String label) {
