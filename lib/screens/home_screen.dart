@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:ingeconomica/screens/aritmetico/views/aritmetico_views.dart';
 import 'package:ingeconomica/screens/compuesto/view/compuesto_view.dart';
+import 'package:ingeconomica/screens/gradiente_geometrico/view/GeometricOptionsForm.dart'; // Importa el nuevo formulario
 import 'package:ingeconomica/screens/gradiente_geometrico/view/geometric_value_calculator.dart';
+import 'package:ingeconomica/screens/gradiente_geometrico/view/geometric_series_calculator.dart'; // Asegúrate de tener este archivo
 import 'package:ingeconomica/screens/simple/services/interes_calculator.dart';
 import 'package:ingeconomica/screens/simple/view/simple_view.dart';
 
@@ -9,32 +11,40 @@ class HomeScreen extends StatefulWidget {
   final String username;
   final double initialAmount;
 
-  const HomeScreen(
-      {super.key, required this.username, required this.initialAmount});
+  const HomeScreen({super.key, required this.username, required this.initialAmount});
 
   @override
-  // ignore: library_private_types_in_public_api
   _HomeScreenState createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
-  int _selectedOptionIndex = 0; // Nuevo índice para las opciones de la lista
+  int _selectedOptionIndex = 0; // Índice para las opciones de la lista
+  Widget? _selectedSubView; // Muestra la vista seleccionada en el submenú
 
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
-      _selectedOptionIndex =
-          0; // Resetear al menú principal al cambiar de sección
+      _selectedOptionIndex = 0; // Resetear al menú principal al cambiar de sección
+      _selectedSubView = null; // Limpiar la vista seleccionada
     });
   }
 
   void _onOptionTapped(int index) {
+  if (index == 3) {
+    // Si selecciona "G. Geométrico", navega al formulario
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const GeometricOptionsForm(),
+      ),
+    );
+  } else {
     setState(() {
-      _selectedOptionIndex =
-          index; // Cambia a la opción seleccionada de la lista
+      _selectedOptionIndex = index; // Cambia a la opción seleccionada de la lista
     });
   }
+}
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +53,7 @@ class _HomeScreenState extends State<HomeScreen> {
       buildMainMenu(context, calculator),
       const SimpleView(),
       const CompuestoView(),
-      const GeometricValueCalculator(),
+      _selectedSubView ?? const SizedBox.shrink(), // Mostrar la vista seleccionada del submenú
       const AritmeticoView()
     ];
 
@@ -154,8 +164,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget buildGridItem(
-      BuildContext context, String title, IconData icon, int optionIndex) {
+  Widget buildGridItem(BuildContext context, String title, IconData icon, int optionIndex) {
     return GestureDetector(
       onTap: () {
         _onOptionTapped(optionIndex); // Cambiar la opción seleccionada
