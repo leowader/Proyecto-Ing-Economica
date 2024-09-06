@@ -15,6 +15,8 @@ import 'package:ingeconomica/screens/simple/view/simple_forms.dart';
 import 'package:ingeconomica/screens/simple/view/simple_interes.dart';
 import 'package:ingeconomica/screens/simple/view/simple_tiempo.dart';
 import 'package:ingeconomica/screens/simple/view/simple_view.dart';
+import 'package:ingeconomica/screens/gradiente_geometrico/view/geometric_value_calculator.dart';
+import 'package:ingeconomica/screens/gradiente_geometrico/view/geometric_series_calculator.dart';
 
 var routes = <String, WidgetBuilder>{
   "/": (_) => const HomeScreen(
@@ -36,4 +38,6 @@ var routes = <String, WidgetBuilder>{
    "/aritmetico/valorfuturo":(_) => const ValorFuturo(),
    "/aritmetico/valorpresenteinfinito":(_) => const ValorPresenteInfinito(),
    "/aritmetico/cuotaespecifica":(_) => const CuotaEspecifica(),
+  "/geometric/value": (_) => const GeometricValueCalculator(), // New route for Geometric Value View
+  "/geometric/series": (_) => const GeometricSeriesCalculator(), // New route for Geometric Series View
 };

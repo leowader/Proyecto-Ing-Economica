@@ -32,8 +32,7 @@ class _HomeScreenState extends State<HomeScreen> {
         title: const Center(
             child: Text(
           "Menu Principal",
-          style:  TextStyle(
-              color: Color.fromARGB(255, 255, 255, 255)),
+          style: TextStyle(color: Color.fromARGB(255, 255, 255, 255)),
         )),
       ),
       body: Column(
@@ -75,7 +74,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 buildGridItem(context, "Interés compuesto", Icons.trending_up,
                     "/compuesto"), // Icono de crecimiento
                 buildGridItem(context, "G. geométrico", Icons.functions,
-                    "/spaces"), // Icono de funciones matemáticas
+                    "/geometric/value"), // Icono de funciones matemáticas
                 buildGridItem(context, "G. Aritmético", Icons.bar_chart,
                     "/aritmetico"), // Icono de gráfico de barras
                 buildGridItem(context, "Préstamos", Icons.monetization_on,
@@ -124,9 +123,10 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ],
             currentIndex: _selectedIndex,
-            selectedItemColor: const Color(0xFFD6D6D6), // Color of the active item
-            unselectedItemColor:
-                const Color.fromARGB(255, 255, 255, 255), // Color of inactive items
+            selectedItemColor:
+                const Color(0xFFD6D6D6), // Color of the active item
+            unselectedItemColor: const Color.fromARGB(
+                255, 255, 255, 255), // Color of inactive items
             backgroundColor:
                 const Color(0xFF232323), // Background color for the navbar
             onTap: _onItemTapped,

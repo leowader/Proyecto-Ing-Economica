@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ingeconomica/screens/compuesto/services/calcularTiempo.dart';
 
-
 class Tiempo extends StatefulWidget {
   const Tiempo({super.key});
 
@@ -12,7 +11,7 @@ class Tiempo extends StatefulWidget {
 class _Tiempo extends State<Tiempo> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _montoFuturoController = TextEditingController();
-   final TextEditingController _rateController = TextEditingController();
+  final TextEditingController _rateController = TextEditingController();
   final TextEditingController _capitalController = TextEditingController();
   final TextEditingController _startDateController = TextEditingController();
   final TextEditingController _endDateController = TextEditingController();
@@ -27,26 +26,25 @@ class _Tiempo extends State<Tiempo> {
     'Semestral': 2,
     'Cuatrimestral': 3,
     'Trimestral': 4,
-    'Bimestral':6,
+    'Bimestral': 6,
     'Mensual': 12
-    };
+  };
 
   final TiempoCalculator _calculator = TiempoCalculator();
 
   void _calculateFutureAmount() {
     if (_formKey.currentState!.validate()) {
       final double capital = double.parse(_capitalController.text);
-      final double montofuturo =  double.parse(_montoFuturoController.text);
+      final double montofuturo = double.parse(_montoFuturoController.text);
       final double rate = double.parse(_rateController.text);
       final int veces = opcionesFrecuencia[frecuenciaSeleccionada]!;
 
       setState(() {
         _futureAmount = _calculator.calculateTiempo(
-          capital: capital,
-          interes: rate/100,
-          vecesporano: veces,
-          montofuturo: montofuturo
-        );
+            capital: capital,
+            interes: rate / 100,
+            vecesporano: veces,
+            montofuturo: montofuturo);
       });
     }
   }
@@ -97,19 +95,37 @@ class _Tiempo extends State<Tiempo> {
                 },
               ),
               const SizedBox(height: 24),
-              DropdownButton<String>(
-                value: frecuenciaSeleccionada,
-                items: opcionesFrecuencia.keys.map<DropdownMenuItem<String>>((String valor) {
-                  return DropdownMenuItem<String>(
-                    value: valor,
-                    child: Text(valor),
-                  );
-                }).toList(), 
-                onChanged: (String ? nuevoValor){
-                  setState(() {
-                    frecuenciaSeleccionada = nuevoValor!;
-                  });
-                }),
+              Container(
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: const Color(0xFFFEF7FF),
+                  borderRadius: BorderRadius.circular(30),
+                  border: Border.all(
+                    color: Colors.grey, // Color del borde
+                    width: 1, // Ancho del borde
+                  ),
+                ),
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                child: DropdownButtonHideUnderline(
+                  child: DropdownButton<String>(
+                    isExpanded:
+                        true, // Permite que el DropdownButton ocupe todo el ancho disponible
+                    value: frecuenciaSeleccionada,
+                    onChanged: (String? nuevoValor) {
+                      setState(() {
+                        frecuenciaSeleccionada = nuevoValor!;
+                      });
+                    },
+                    items: opcionesFrecuencia.keys
+                        .map<DropdownMenuItem<String>>((String valor) {
+                      return DropdownMenuItem<String>(
+                        value: valor,
+                        child: Text(valor),
+                      );
+                    }).toList(),
+                  ),
+                ),
+              ),
               const SizedBox(height: 24),
               TextFormField(
                 controller: _montoFuturoController,
@@ -159,8 +175,7 @@ class _Tiempo extends State<Tiempo> {
               ),
               const SizedBox(height: 20),
               if (_futureAmount != null)
-              
-              SizedBox(
+                SizedBox(
                   width: double.infinity,
                   child: Align(
                     alignment: Alignment.center,
@@ -194,7 +209,6 @@ class _Tiempo extends State<Tiempo> {
                     ),
                   ),
                 ),
-               
             ],
           ),
         ),
