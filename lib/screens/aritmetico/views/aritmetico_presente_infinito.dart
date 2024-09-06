@@ -13,7 +13,7 @@ class _ValorPresenteInfinitoState extends State<ValorPresenteInfinito> {
   final TextEditingController _capitalController = TextEditingController();
   final TextEditingController _rateController = TextEditingController();
   final TextEditingController _gradienteController = TextEditingController();
-
+  String _selectedOption = "Creciente";
 
   double? _infinitePresentAmount;
 
@@ -26,13 +26,14 @@ class _ValorPresenteInfinitoState extends State<ValorPresenteInfinito> {
       final double capital = double.parse(_capitalController.text);
       final double rate = double.parse(_rateController.text);
       final double gradient = double.parse(_gradienteController.text);
-
+      final bool perfil = (_selectedOption == "Creciente")?true:false;
 
       setState(() {
         _infinitePresentAmount = _calculator.calculateInfinitePresentValue(
           pago: capital, 
           gradiente: gradient, 
-          interes: rate);
+          interes: rate,
+          perfil: perfil);
       });
     }
   }
@@ -56,14 +57,14 @@ class _ValorPresenteInfinitoState extends State<ValorPresenteInfinito> {
                 controller: _capitalController,
                 keyboardType: TextInputType.number,
                 decoration: InputDecoration(
-                  labelText: "Pago",
+                  labelText: "Valor Primera Cuota",
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(30.0),
                   ),
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Por favor ingrese el pago';
+                    return 'Por favor ingrese el Valor de la Primera Cuota';
                   }
                   return null;
                 },
@@ -102,7 +103,41 @@ class _ValorPresenteInfinitoState extends State<ValorPresenteInfinito> {
                   return null;
                 },
               ),
-                            const SizedBox(height: 24),
+              const SizedBox(height: 24),
+              Container(
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: const Color(0xFFFEF7FF),
+                  borderRadius: BorderRadius.circular(30),
+                  border: Border.all(
+                    color: Colors.grey, // Color del borde
+                    width: 1, // Ancho del borde
+                  ),
+                ),
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                child: DropdownButtonHideUnderline(
+                  child: DropdownButton<String>(
+                    isExpanded:
+                        true, // Permite que el DropdownButton ocupe todo el ancho disponible
+                    value: _selectedOption,
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        _selectedOption = newValue!;
+                      });
+                    },
+                    items: <String>[
+                      'Creciente',
+                      'Decreciente',
+                    ].map<DropdownMenuItem<String>>((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(value),
+                      );
+                    }).toList(),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 24),
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(

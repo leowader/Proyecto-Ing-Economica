@@ -13,10 +13,15 @@ class _ValorPresenteState extends State<ValorPresente> {
   final TextEditingController _capitalController = TextEditingController();
   final TextEditingController _rateController = TextEditingController();
   final TextEditingController _gradienteController = TextEditingController();
+  final TextEditingController _daysController = TextEditingController();
   final TextEditingController _monthsController = TextEditingController();
-
+  final TextEditingController _yearsController = TextEditingController();
+  String _selectedOption = "Creciente";
+  String _selectedOption2 = "Valor Presente";
+  String _selectedOption3 = "Mensual";
+  String _answerText = "Valor Presente";
   double? _presentAmount;
-
+ 
 
   final GradienteACalculator _calculator =
       GradienteACalculator(); // Instanciamos la clase de lógica.
@@ -26,16 +31,33 @@ class _ValorPresenteState extends State<ValorPresente> {
       final double capital = double.parse(_capitalController.text);
       final double rate = double.parse(_rateController.text);
       final double gradient = double.parse(_gradienteController.text);
-      final double period = double.parse(_monthsController.text);
+      final double year = double.parse(_yearsController.text) ;
+      final double month = double.parse(_monthsController.text);
+      final double day = double.parse(_daysController.text);
+      final double period = _calculator.calculatePeriod(days: day, months: month, years: year, mcuota: _selectedOption3);
 
-
-      setState(() {
-        _presentAmount = _calculator.calculatePresentValue(
-          pago: capital, 
-          gradiente: gradient, 
-          periodos: period, 
-          interes: rate);
-      });
+      final bool perfil = (_selectedOption=="Creciente")?true:false;
+      if (_selectedOption2 == "Valor Presente"){
+        setState(() {
+          _answerText= _selectedOption2;
+          _presentAmount = _calculator.calculatePresentValue(
+            pago: capital, 
+            gradiente: gradient, 
+            periodos: period, 
+            interes: rate,
+            perfil: perfil);
+        });
+      }else{
+        setState(() {
+          _answerText= _selectedOption2;
+          _presentAmount = _calculator.calculateFirtsPaymentPresentValue(
+            present: capital, 
+            gradiente: gradient, 
+            periodos: month, 
+            interes: rate,
+            perfil: perfil);
+        });
+      }
     }
   }
 
@@ -44,7 +66,7 @@ class _ValorPresenteState extends State<ValorPresente> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Cálculo del Valor Presente"),
+        title: Text("Cálculo del $_selectedOption2"),
         centerTitle: true,
       ),
       body: Padding(
@@ -54,18 +76,52 @@ class _ValorPresenteState extends State<ValorPresente> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              Container(
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: const Color(0xFFFEF7FF),
+                  borderRadius: BorderRadius.circular(30),
+                  border: Border.all(
+                    color: Colors.grey, // Color del borde
+                    width: 1, // Ancho del borde
+                  ),
+                ),
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                child: DropdownButtonHideUnderline(
+                  child: DropdownButton<String>(
+                    isExpanded:
+                        true, // Permite que el DropdownButton ocupe todo el ancho disponible
+                    value: _selectedOption2,
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        _selectedOption2 = newValue!;
+                      });
+                    },
+                    items: <String>[
+                      'Valor Presente',
+                      'Valor Primera Cuota',
+                    ].map<DropdownMenuItem<String>>((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(value),
+                      );
+                    }).toList(),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
               TextFormField(
                 controller: _capitalController,
                 keyboardType: TextInputType.number,
                 decoration: InputDecoration(
-                  labelText: "Pago",
+                  labelText: (_selectedOption2=="Valor Presente")?"Valor Primera Cuota":"Valor Presente",
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(30.0),
                   ),
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Por favor ingrese el pago';
+                    return 'Por favor ingrese el ${(_selectedOption2=="Valor Presente")?"Valor Primera Cuota":"Valor Presente"}';
                   }
                   return null;
                 },
@@ -104,22 +160,131 @@ class _ValorPresenteState extends State<ValorPresente> {
                   return null;
                 },
               ),
-                            const SizedBox(height: 24),
-              TextFormField(
-                controller: _monthsController,
-                keyboardType: TextInputType.number,
-                decoration: InputDecoration(
-                  labelText: "Periodo",
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(30.0),
+              const SizedBox(height: 24),
+              Row(children: [
+                Expanded(
+                  child: Container(
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFFEF7FF),
+                    borderRadius: BorderRadius.circular(30),
+                    border: Border.all(
+                      color: Colors.grey, // Color del borde
+                      width: 1, // Ancho del borde
+                    ),
+                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  child: DropdownButtonHideUnderline(
+                    child: DropdownButton<String>(
+                      isExpanded:
+                          true, // Permite que el DropdownButton ocupe todo el ancho disponible
+                      value: _selectedOption3,
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          _selectedOption3 = newValue!;
+                        });
+                      },
+                      items: <String>[
+                        'Mensual',
+                        'Anual',
+                      ].map<DropdownMenuItem<String>>((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(value),
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                                ),
+                ),
+                Expanded(
+                child: TextFormField(
+                  controller: _daysController,
+                  keyboardType: TextInputType.number,
+                  decoration: InputDecoration(
+                    labelText: "Dias",
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30.0),
+                    ),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Por favor ingrese los dias';
+                    }
+                    return null;
+                  },
+                ),
+              ),
+              Expanded(
+                child: TextFormField(
+                  controller: _monthsController,
+                  keyboardType: TextInputType.number,
+                  decoration: InputDecoration(
+                    labelText: "Meses",
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30.0),
+                    ),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Por favor ingrese los meses';
+                    }
+                    return null;
+                  },
+                ),
+              ),
+              Expanded(
+                  child: TextFormField(
+                  controller: _yearsController,
+                  keyboardType: TextInputType.number,
+                  decoration: InputDecoration(
+                    labelText: "años",
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30.0),
+                    ),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Por favor ingrese los años';
+                    }
+                    return null;
+                  },
+                                ),
+                ),
+              ],),
+              const SizedBox(height: 24),
+              Container(
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: const Color(0xFFFEF7FF),
+                  borderRadius: BorderRadius.circular(30),
+                  border: Border.all(
+                    color: Colors.grey, // Color del borde
+                    width: 1, // Ancho del borde
                   ),
                 ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Por favor ingrese el periodo';
-                  }
-                  return null;
-                },
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                child: DropdownButtonHideUnderline(
+                  child: DropdownButton<String>(
+                    isExpanded:
+                        true, // Permite que el DropdownButton ocupe todo el ancho disponible
+                    value: _selectedOption,
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        _selectedOption = newValue!;
+                      });
+                    },
+                    items: <String>[
+                      'Creciente',
+                      'Decreciente',
+                    ].map<DropdownMenuItem<String>>((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(value),
+                      );
+                    }).toList(),
+                  ),
+                ),
               ),
               const SizedBox(height: 24),
               SizedBox(
@@ -131,46 +296,49 @@ class _ValorPresenteState extends State<ValorPresente> {
                     backgroundColor: const Color(0xFF232323),
                     foregroundColor: Colors.white,
                   ),
-                  child: const Text("Calcular Valor Presente"),
+                  child: Text("Calcular $_selectedOption2"),
                 ),
               ),
               const SizedBox(height: 20),
+              
               if (_presentAmount != null)
 
-              SizedBox(
-                  width: double.infinity,
-                  child: Align(
-                    alignment: Alignment.center,
-                    child: Container(
-                      padding: const EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF232323),
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.max,
-                        children: [
-                          const Icon(
-                            Icons.monetization_on,
-                            color: Colors.white,
-                            size: 26,
-                          ),
-                          const SizedBox(width: 12),
-                          Expanded(
-                              child: Center(
-                            child: Text(
-                              "Valor Presente: ${_calculator.formatNumber(_presentAmount!)}",
-                              style: const TextStyle(
-                                fontSize: 18,
-                                color: Colors.white,
-                              ),
+              Expanded(
+                child: SizedBox(
+                    width: double.infinity,
+                    child: Align(
+                      alignment: Alignment.center,
+                      child: Container(
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF232323),
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.max,
+                          children: [
+                            const Icon(
+                              Icons.monetization_on,
+                              color: Colors.white,
+                              size: 26,
                             ),
-                          )),
-                        ],
+                            const SizedBox(width: 12),
+                            Expanded(
+                                child: Center(
+                              child: Text(
+                                "$_answerText: ${_calculator.formatNumber(_presentAmount!)}",
+                                style: const TextStyle(
+                                  fontSize: 18,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            )),
+                          ],
+                        ),
                       ),
                     ),
                   ),
-                ),
+              ),
                
             ],
           ),
