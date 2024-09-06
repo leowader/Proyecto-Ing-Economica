@@ -13,7 +13,13 @@ class _ValorFuturoState extends State<ValorFuturo> {
   final TextEditingController _capitalController = TextEditingController();
   final TextEditingController _rateController = TextEditingController();
   final TextEditingController _gradienteController = TextEditingController();
+  final TextEditingController _daysController = TextEditingController();
   final TextEditingController _monthsController = TextEditingController();
+  final TextEditingController _yearsController = TextEditingController();
+  String _selectedOption = "Creciente";
+  String _selectedOption2 = "Valor Futuro";
+   String _selectedOption3 = "Mensual";
+  String _answerText = "Valor Futuro";
 
   double? _futureAmount;
 
@@ -25,22 +31,44 @@ class _ValorFuturoState extends State<ValorFuturo> {
       final double capital = double.parse(_capitalController.text);
       final double rate = double.parse(_rateController.text);
       final double gradient = double.parse(_gradienteController.text);
-      final double period = double.parse(_monthsController.text);
+      final double year = double.parse(_yearsController.text) ;
+      final double month = double.parse(_monthsController.text);
+      final double day = double.parse(_daysController.text);
+      final double period = _calculator.calculatePeriod(days: day, months: month, years: year, mcuota: _selectedOption3);
+      final bool perfil = (_selectedOption == "Creciente")?true:false;
 
-    if (period != 0) {
-
-
-      setState(() {
-        _futureAmount = _calculator.calculateFutureValue(
-          pago: capital, 
-          gradiente: gradient, 
-          periodos: period, 
-          interes: rate);
-      });
-    } else {
-      setState(() {
-        _futureAmount = null;
-      });
+    if(_selectedOption2 == "Valor Futuro"){
+      if (period != 0) {
+        setState(() {
+          _answerText= _selectedOption2;
+          _futureAmount = _calculator.calculateFutureValue(
+            pago: capital, 
+            gradiente: gradient, 
+            periodos: period, 
+            interes: rate,
+            perfil: perfil);
+        });
+      } else {
+        setState(() {
+          _futureAmount = null;
+        });
+      }
+    }else{
+      if (period != 0) {
+        setState(() {
+          _answerText= _selectedOption2;
+          _futureAmount = _calculator.calculateFirtsPaymentFutureValue(
+            future: capital, 
+            gradiente: gradient, 
+            periodos: period, 
+            interes: rate,
+            perfil: perfil);
+        });
+      } else {
+        setState(() {
+          _futureAmount = null;
+        });
+      }
     }
   }
 
@@ -48,7 +76,7 @@ class _ValorFuturoState extends State<ValorFuturo> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Calculadora de Valor Futuro'),
+        title: Text('Calculadora de $_selectedOption2'),
       ),
       body: Center(
         child: Padding(
@@ -56,13 +84,171 @@ class _ValorFuturoState extends State<ValorFuturo> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              buildTextField(_capitalController, 'Pago'),
+               Container(
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: const Color(0xFFFEF7FF),
+                  borderRadius: BorderRadius.circular(30),
+                  border: Border.all(
+                    color: Colors.grey, // Color del borde
+                    width: 1, // Ancho del borde
+                  ),
+                ),
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                child: DropdownButtonHideUnderline(
+                  child: DropdownButton<String>(
+                    isExpanded:
+                        true, // Permite que el DropdownButton ocupe todo el ancho disponible
+                    value: _selectedOption2,
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        _selectedOption2 = newValue!;
+                      });
+                    },
+                    items: <String>[
+                      'Valor Futuro',
+                      'Valor Primera Cuota',
+                    ].map<DropdownMenuItem<String>>((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(value),
+                      );
+                    }).toList(),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+              buildTextField(_capitalController, (_selectedOption2 == "Valor Futuro")?'Valor Primera Cuota':'Valor Futuro'),
               const SizedBox(height: 24),
               buildTextField(_rateController, 'Interes (%)'),
               const SizedBox(height: 24),
               buildTextField(_gradienteController, 'Gradiente'),
               const SizedBox(height: 24),
-              buildTextField(_monthsController, 'Periodo'),
+              Row(children: [
+                 Expanded(
+                  child: Container(
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFFEF7FF),
+                    borderRadius: BorderRadius.circular(30),
+                    border: Border.all(
+                      color: Colors.grey, // Color del borde
+                      width: 1, // Ancho del borde
+                    ),
+                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  child: DropdownButtonHideUnderline(
+                    child: DropdownButton<String>(
+                      isExpanded:
+                          true, // Permite que el DropdownButton ocupe todo el ancho disponible
+                      value: _selectedOption3,
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          _selectedOption3 = newValue!;
+                        });
+                      },
+                      items: <String>[
+                        'Mensual',
+                        'Anual',
+                      ].map<DropdownMenuItem<String>>((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(value),
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                                ),
+                ),
+                Expanded(
+                child: TextFormField(
+                  controller: _daysController,
+                  keyboardType: TextInputType.number,
+                  decoration: InputDecoration(
+                    labelText: "Dias",
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30.0),
+                    ),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Por favor ingrese los dias';
+                    }
+                    return null;
+                  },
+                ),
+              ),
+              Expanded(
+                child: TextFormField(
+                  controller: _monthsController,
+                  keyboardType: TextInputType.number,
+                  decoration: InputDecoration(
+                    labelText: "Meses",
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30.0),
+                    ),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Por favor ingrese los meses';
+                    }
+                    return null;
+                  },
+                ),
+              ),
+              Expanded(
+                  child: TextFormField(
+                  controller: _yearsController,
+                  keyboardType: TextInputType.number,
+                  decoration: InputDecoration(
+                    labelText: "años",
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30.0),
+                    ),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Por favor ingrese los años';
+                    }
+                    return null;
+                  },
+                                ),
+                ),
+              ],),
+              const SizedBox(height: 24),
+              Container(
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: const Color(0xFFFEF7FF),
+                  borderRadius: BorderRadius.circular(30),
+                  border: Border.all(
+                    color: Colors.grey, // Color del borde
+                    width: 1, // Ancho del borde
+                  ),
+                ),
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                child: DropdownButtonHideUnderline(
+                  child: DropdownButton<String>(
+                    isExpanded:
+                        true, // Permite que el DropdownButton ocupe todo el ancho disponible
+                    value: _selectedOption,
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        _selectedOption = newValue!;
+                      });
+                    },
+                    items: <String>[
+                      'Creciente',
+                      'Decreciente',
+                    ].map<DropdownMenuItem<String>>((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(value),
+                      );
+                    }).toList(),
+                  ),
+                ),
+              ),
               const SizedBox(height: 24),
               SizedBox(
                 width: double.infinity,
@@ -73,7 +259,7 @@ class _ValorFuturoState extends State<ValorFuturo> {
                     backgroundColor: const Color(0xFF232323),
                     foregroundColor: Colors.white,
                   ),
-                  child: const Text("Calcular Valor Futuro"),
+                  child: Text("Calcular $_selectedOption2"),
                 ),
               ),
               const SizedBox(height: 24),
@@ -100,7 +286,7 @@ class _ValorFuturoState extends State<ValorFuturo> {
                           Expanded(
                               child: Center(
                             child: Text(
-                              'Tasa de Interés: ${_futureAmount!.toStringAsFixed(2)}',
+                              '$_answerText: ${_futureAmount!.toStringAsFixed(2)}',
                               style: const TextStyle(
                                 fontSize: 18,
                                 color: Colors.white,

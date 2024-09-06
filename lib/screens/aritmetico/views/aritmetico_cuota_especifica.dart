@@ -54,7 +54,7 @@ class _CuotaEspecificaState extends State<CuotaEspecifica> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              buildTextField(_capitalController, 'Pago'),
+              buildTextField(_capitalController, 'Valor Primera Cuota'),
               const SizedBox(height: 24),
               buildTextField(_gradienteController, 'Gradiente'),
               const SizedBox(height: 24),
