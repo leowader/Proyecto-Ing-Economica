@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:ingeconomica/screens/amortizacion/view/alemana_view.dart';
+import 'package:ingeconomica/screens/amortizacion/view/amortizacion_view.dart';
+import 'package:ingeconomica/screens/amortizacion/view/francesa.dart';
 import 'package:ingeconomica/screens/compuesto/view/compuesto_view.dart';
 import 'package:ingeconomica/screens/compuesto/view/montofuturo.dart';
 import 'package:ingeconomica/screens/compuesto/view/tasaInteres.dart';
@@ -20,5 +23,10 @@ var routes = <String, WidgetBuilder>{
   "/compuesto":(_) => const CompuestoView(),
   "/compuesto/montofuturo":(_) => const Montofuturo(),
   "/compuesto/tasainteres": (_) => const TasaInteres(),
-  "/compuesto/tiempo": (_) => const Tiempo()
+  "/compuesto/tiempo": (_) => const Tiempo(),
+  "/amortizacion": (_) => const AmortizacionView(),
+  "/amortizacion/francesa": (_) => const Francesa(),
+  "/amortizacion/alemana": (_) => const AlemanaView(),
+
+
 };
