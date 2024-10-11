@@ -13,6 +13,7 @@ import 'package:ingeconomica/screens/compuesto/view/montofuturo.dart';
 import 'package:ingeconomica/screens/compuesto/view/tasaInteres.dart';
 import 'package:ingeconomica/screens/compuesto/view/tiempo.dart';
 import 'package:ingeconomica/screens/home_screen.dart';
+import 'package:ingeconomica/screens/inflacion/view/inflacion.dart';
 import 'package:ingeconomica/screens/login.dart';
 import 'package:ingeconomica/screens/register.dart';
 import 'package:ingeconomica/screens/simple/view/simple_forms.dart';
@@ -41,9 +42,8 @@ var routes = <String, WidgetBuilder>{
   "/amortizacion": (_) => const AmortizacionView(),
   "/amortizacion/francesa": (_) => const Francesa(),
   "/amortizacion/alemana": (_) => const AlemanaView(),
+  "/inflacion": (_) => const Inflacion(),
 
-
-  "/compuesto/tiempo": (_) => const Tiempo(),
   "/aritmetico": (_) => const AritmeticoView(),
   "/aritmetico/valorpresente": (_) => const ValorPresente(),
   "/aritmetico/valorfuturo": (_) => const ValorFuturo(),

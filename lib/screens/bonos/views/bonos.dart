@@ -6,8 +6,8 @@ class Bono {
   final double tasaCupon;
   final double tasaRendimiento;
   final int anos;
-  final int diasDevengados; // Agregado para el interés devengado
-  final int periodoCupon; // Periodo de pago del cupon en días
+  final int diasDevengados; 
+  final int periodoCupon; 
 
   Bono({
     required this.valorNominal,
@@ -26,7 +26,6 @@ class Bono {
       precio += pagoCupon / pow(1 + tasaRendimiento, t * periodoCupon / 360);
     }
 
-    // Agregar el valor nominal descontado al final del período
     precio += valorNominal / pow(1 + tasaRendimiento, anos);
     
     return precio;
@@ -69,20 +68,19 @@ class _BonosState extends State<Bonos> {
   final TextEditingController _tasaRendimientoController = TextEditingController();
   final TextEditingController _anosController = TextEditingController();
   final TextEditingController _diasDevengadosController = TextEditingController();
-  final TextEditingController _periodoCuponController = TextEditingController(); // Período del cupon
-  
-  double _precioBono = 0.0;
-  double _precioSucio = 0.0;
-  double _interesDevengado = 0.0;
-  double _precioLimpio = 0.0;
+  final TextEditingController _periodoCuponController = TextEditingController(); 
+
+  double _resultado = 0.0;
+  String _opcionSeleccionada = 'Precio del Bono';
+  final List<String> _opciones = ['Precio del Bono', 'Precio Sucio', 'Interés Devengado', 'Precio Limpio'];
 
   void _calcularValores() {
     final valorNominal = double.tryParse(_valorNominalController.text);
-    final tasaCupon = double.tryParse(_tasaCuponController.text)! / 100; // Convertir a decimal
-    final tasaRendimiento = double.tryParse(_tasaRendimientoController.text)! / 100; // Convertir a decimal
+    final tasaCupon = double.tryParse(_tasaCuponController.text)! / 100;
+    final tasaRendimiento = double.tryParse(_tasaRendimientoController.text)! / 100;
     final anos = int.tryParse(_anosController.text);
     final diasDevengados = int.tryParse(_diasDevengadosController.text);
-    final periodoCupon = int.tryParse(_periodoCuponController.text); // Periodo del cupon en días
+    final periodoCupon = int.tryParse(_periodoCuponController.text);
 
     if (valorNominal != null && anos != null && diasDevengados != null && periodoCupon != null) {
       final bono = Bono(
@@ -95,10 +93,20 @@ class _BonosState extends State<Bonos> {
       );
 
       setState(() {
-        _precioBono = bono.calcularPrecio();
-        _precioSucio = bono.calcularPrecioSucio();
-        _interesDevengado = bono.calcularInteresDevengado();
-        _precioLimpio = bono.calcularPrecioLimpio();
+        switch (_opcionSeleccionada) {
+          case 'Precio del Bono':
+            _resultado = bono.calcularPrecio();
+            break;
+          case 'Precio Sucio':
+            _resultado = bono.calcularPrecioSucio();
+            break;
+          case 'Interés Devengado':
+            _resultado = bono.calcularInteresDevengado();
+            break;
+          case 'Precio Limpio':
+            _resultado = bono.calcularPrecioLimpio();
+            break;
+        }
       });
     }
   }
@@ -106,10 +114,8 @@ class _BonosState extends State<Bonos> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Cálculo de Bonos'),
-      ),
-      body: SingleChildScrollView( // Agregado para hacer la vista scrollable
+
+      body: SingleChildScrollView( 
         padding: const EdgeInsets.all(16.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
@@ -117,7 +123,7 @@ class _BonosState extends State<Bonos> {
             TextField(
               controller: _valorNominalController,
               decoration: const InputDecoration(
-                labelText: 'Valor Nominal del Bono (£)',
+                labelText: 'Valor Nominal del Bono () ',
                 border: OutlineInputBorder(),
               ),
               keyboardType: TextInputType.number,
@@ -168,34 +174,28 @@ class _BonosState extends State<Bonos> {
               keyboardType: TextInputType.number,
             ),
             const SizedBox(height: 16),
+            DropdownButton<String>(
+              value: _opcionSeleccionada,
+              items: _opciones.map((String opcion) {
+                return DropdownMenuItem<String>(
+                  value: opcion,
+                  child: Text(opcion),
+                );
+              }).toList(),
+              onChanged: (String? nuevaOpcion) {
+                setState(() {
+                  _opcionSeleccionada = nuevaOpcion!;
+                });
+              },
+            ),
+            const SizedBox(height: 16),
             ElevatedButton(
               onPressed: _calcularValores,
-              child: const Text('Calcular Valores del Bono'),
+              child: const Text('Calcular'),
             ),
             const SizedBox(height: 16),
             Text(
-              'Precio del Bono: £${_precioBono.toStringAsFixed(2)}',
-              style: const TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            Text(
-              'Precio Sucio: £${_precioSucio.toStringAsFixed(2)}',
-              style: const TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            Text(
-              'Interés Devengado: £${_interesDevengado.toStringAsFixed(2)}',
-              style: const TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            Text(
-              'Precio Limpio: £${_precioLimpio.toStringAsFixed(2)}',
+              'Resultado: ${_resultado.toStringAsFixed(2)}',
               style: const TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
