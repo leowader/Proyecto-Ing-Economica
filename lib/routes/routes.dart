@@ -4,6 +4,7 @@ import 'package:ingeconomica/screens/aritmetico/views/aritmetico_presente.dart';
 import 'package:ingeconomica/screens/aritmetico/views/aritmetico_presente_infinito.dart';
 import 'package:ingeconomica/screens/aritmetico/views/aritmetico_views.dart';
 import 'package:ingeconomica/screens/aritmetico/views/gradiente_aritmetico_futuro.dart';
+import 'package:ingeconomica/screens/bonos/views/bonos.dart';
 import 'package:ingeconomica/screens/compuesto/view/compuesto_view.dart';
 import 'package:ingeconomica/screens/compuesto/view/montofuturo.dart';
 import 'package:ingeconomica/screens/compuesto/view/tasaInteres.dart';
@@ -23,6 +24,7 @@ var routes = <String, WidgetBuilder>{
         username: "Tester",
         initialAmount: 2000000,
       ),
+  "/bonos": (_) => const Bonos(),
   "/login": (_) => const Login(),
   "/register": (_) => const Register(),
   "/simple": (_) => const SimpleView(),
@@ -38,8 +40,6 @@ var routes = <String, WidgetBuilder>{
   "/aritmetico/valorfuturo": (_) => const ValorFuturo(),
   "/aritmetico/valorpresenteinfinito": (_) => const ValorPresenteInfinito(),
   "/aritmetico/cuotaespecifica": (_) => const CuotaEspecifica(),
-  "/geometric/value": (_) =>
-      const GeometricValueCalculator(), 
-  "/geometric/series": (_) =>
-      const GeometricSeriesCalculator(), 
+  "/geometric/value": (_) => const GeometricValueCalculator(),
+  "/geometric/series": (_) => const GeometricSeriesCalculator(),
 };

@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:ingeconomica/screens/aritmetico/views/aritmetico_views.dart';
+import 'package:ingeconomica/screens/bonos/views/bonos.dart';
 import 'package:ingeconomica/screens/compuesto/view/compuesto_view.dart';
-import 'package:ingeconomica/screens/gradiente_geometrico/view/GeometricOptionsForm.dart'; // Importa el nuevo formulario
+import 'package:ingeconomica/screens/gradiente_geometrico/view/GeometricOptionsForm.dart'; 
 import 'package:ingeconomica/screens/gradiente_geometrico/view/geometric_value_calculator.dart';
-import 'package:ingeconomica/screens/gradiente_geometrico/view/geometric_series_calculator.dart'; // Asegúrate de tener este archivo
+import 'package:ingeconomica/screens/gradiente_geometrico/view/geometric_series_calculator.dart';
 import 'package:ingeconomica/screens/simple/services/interes_calculator.dart';
 import 'package:ingeconomica/screens/simple/view/simple_view.dart';
 
@@ -11,7 +12,8 @@ class HomeScreen extends StatefulWidget {
   final String username;
   final double initialAmount;
 
-  const HomeScreen({super.key, required this.username, required this.initialAmount});
+  const HomeScreen(
+      {super.key, required this.username, required this.initialAmount});
 
   @override
   _HomeScreenState createState() => _HomeScreenState();
@@ -25,26 +27,35 @@ class _HomeScreenState extends State<HomeScreen> {
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
-      _selectedOptionIndex = 0; // Resetear al menú principal al cambiar de sección
+      _selectedOptionIndex =
+          0; // Resetear al menú principal al cambiar de sección
       _selectedSubView = null; // Limpiar la vista seleccionada
     });
   }
 
   void _onOptionTapped(int index) {
-  if (index == 3) {
-    // Si selecciona "G. Geométrico", navega al formulario
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const GeometricOptionsForm(),
-      ),
-    );
-  } else {
-    setState(() {
-      _selectedOptionIndex = index; // Cambia a la opción seleccionada de la lista
-    });
+    if (index == 3) {
+      // Si selecciona "G. Geométrico", navega al formulario
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const GeometricOptionsForm(),
+        ),
+      );
+    } else if (index == 7) {
+      // Si selecciona "Bonos", navega a la vista de Bonos
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const Bonos(),
+        ),
+      );
+    } else {
+      setState(() {
+        _selectedOptionIndex = index; 
+      });
+    }
   }
-}
 
   @override
   Widget build(BuildContext context) {
@@ -53,7 +64,8 @@ class _HomeScreenState extends State<HomeScreen> {
       buildMainMenu(context, calculator),
       const SimpleView(),
       const CompuestoView(),
-      _selectedSubView ?? const SizedBox.shrink(), // Mostrar la vista seleccionada del submenú
+      _selectedSubView ??
+          const SizedBox.shrink(), // Mostrar la vista seleccionada del submenú
       const AritmeticoView()
     ];
 
@@ -137,6 +149,8 @@ class _HomeScreenState extends State<HomeScreen> {
               buildGridItem(context, "Amortizacion", Icons.monetization_on, 0),
               buildGridItem(context, "TIR", Icons.monetization_on, 0),
               buildGridItem(context, "UVR", Icons.monetization_on, 0),
+              buildGridItem(context, "Bonos", Icons.monetization_on, 7), // Opción de Bonos
+              buildGridItem(context, "Inflacion", Icons.monetization_on, 8),
               buildGridItem(context, "Préstamos", Icons.monetization_on, 0),
               buildGridItem(context, "Gestión de Pagos", Icons.payment, 0),
             ],
@@ -164,7 +178,8 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget buildGridItem(BuildContext context, String title, IconData icon, int optionIndex) {
+  Widget buildGridItem(
+      BuildContext context, String title, IconData icon, int optionIndex) {
     return GestureDetector(
       onTap: () {
         _onOptionTapped(optionIndex); // Cambiar la opción seleccionada
