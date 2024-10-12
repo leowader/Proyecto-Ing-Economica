@@ -7,6 +7,7 @@ import 'package:ingeconomica/screens/gradiente_geometrico/view/GeometricOptionsF
 import 'package:ingeconomica/screens/inflacion/view/inflacion.dart';
 import 'package:ingeconomica/screens/simple/services/interes_calculator.dart';
 import 'package:ingeconomica/screens/simple/view/simple_view.dart';
+import 'package:ingeconomica/screens/tir/view/tir_form.dart';
 
 
 class HomeScreen extends StatefulWidget {
@@ -53,6 +54,7 @@ class _HomeScreenState extends State<HomeScreen> {
       const AmortizacionView(),
       const Bonos(), // Bonos ahora se maneja dentro del stack
       const Inflacion(), // Inflación ahora se maneja dentro del stack
+      TIRView(),
     ];
 
     return Scaffold(

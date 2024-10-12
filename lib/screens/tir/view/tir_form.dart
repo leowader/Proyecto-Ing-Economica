@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:ingeconomica/screens/tir/services/calcular_tir.dart';
+import 'package:ingeconomica/screens/tir/services/calcular_tir.dart'; // Asegúrate de que la ruta sea correcta según tu estructura de carpetas
 
 class TIRView extends StatefulWidget {
   @override
@@ -13,28 +13,20 @@ class _TIRViewState extends State<TIRView> {
   // Controladores para los campos de entrada
   final TextEditingController _inversionController = TextEditingController();
   final TextEditingController _flujosController = TextEditingController();
-  final TextEditingController _tasaInicialController = TextEditingController();
-  final TextEditingController _tasaFinanciamientoController =
-      TextEditingController();
-  final TextEditingController _tasaReinversionController =
-      TextEditingController();
 
-  String _tipoTIR = 'Simple';
+  String _metodoSeleccionado = 'Calcular TIR';
   double? _resultadoTIR;
 
   // Limpia los campos después de un cálculo
   void _clearFields() {
     _inversionController.clear();
     _flujosController.clear();
-    _tasaInicialController.clear();
-    _tasaFinanciamientoController.clear();
-    _tasaReinversionController.clear();
     setState(() {
       _resultadoTIR = null;
     });
   }
 
-  // Realiza el cálculo según el tipo de TIR seleccionado
+  // Realiza el cálculo según el método seleccionado
   void _calcularTIR() {
     if (_formKey.currentState!.validate()) {
       double inversionInicial = double.parse(_inversionController.text);
@@ -42,31 +34,14 @@ class _TIRViewState extends State<TIRView> {
           .split(',')
           .map((f) => double.parse(f.trim()))
           .toList();
-      double tasaInicial = double.parse(_tasaInicialController.text);
 
-      if (_tipoTIR == 'Simple') {
-        setState(() {
-          _resultadoTIR = _tirCalculator.calcularTIRSimple(
-            flujos,
-            inversionInicial,
-            tasaInicial,
-          );
-        });
-      } else if (_tipoTIR == 'Modificada') {
-        double tasaFinanciamiento =
-            double.parse(_tasaFinanciamientoController.text);
-        double tasaReinversion = double.parse(_tasaReinversionController.text);
-        setState(() {
-          _resultadoTIR = _tirCalculator.calcularMIRR(
-            flujos,
-            inversionInicial,
-            tasaFinanciamiento,
-            tasaReinversion,
-          );
-        });
-      } else if (_tipoTIR == 'Incremental') {
-        // Aquí puedes agregar la lógica para el cálculo incremental si tienes más campos
-      }
+      setState(() {
+        if (_metodoSeleccionado == 'Calcular TIR') {
+          _resultadoTIR = _tirCalculator.calcularTIR(flujos, inversionInicial);
+        } else if (_metodoSeleccionado == 'Prueba y Error') {
+          _resultadoTIR = _tirCalculator.calcularTIRPruebaError(flujos, inversionInicial);
+        }
+      });
     }
   }
 
@@ -99,8 +74,7 @@ class _TIRViewState extends State<TIRView> {
                 controller: _flujosController,
                 keyboardType: TextInputType.text,
                 decoration: InputDecoration(
-                    labelText:
-                        'Flujos de caja (separados por comas, ej: 3000,4000)'),
+                    labelText: 'Flujos de caja (separados por comas, ej: 3000,4000)'),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Por favor ingrese los flujos de caja';
@@ -108,63 +82,22 @@ class _TIRViewState extends State<TIRView> {
                   return null;
                 },
               ),
-              // Campo para tasa inicial (para TIR simple y modificada)
-              TextFormField(
-                controller: _tasaInicialController,
-                keyboardType: TextInputType.number,
-                decoration: InputDecoration(labelText: 'Tasa Inicial (%)'),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Por favor ingrese la tasa inicial';
-                  }
-                  return null;
-                },
-              ),
-              // Selector del tipo de TIR
+              // Selector del método de cálculo
               DropdownButtonFormField<String>(
-                value: _tipoTIR,
-                decoration: InputDecoration(labelText: 'Tipo de TIR'),
-                items: ['Simple', 'Modificada', 'Incremental']
-                    .map((tipo) => DropdownMenuItem(
-                          value: tipo,
-                          child: Text(tipo),
+                value: _metodoSeleccionado,
+                decoration: InputDecoration(labelText: 'Método de Cálculo'),
+                items: ['Calcular TIR', 'Prueba y Error']
+                    .map((metodo) => DropdownMenuItem(
+                          value: metodo,
+                          child: Text(metodo),
                         ))
                     .toList(),
                 onChanged: (String? value) {
                   setState(() {
-                    _tipoTIR = value!;
+                    _metodoSeleccionado = value!;
                   });
                 },
               ),
-              if (_tipoTIR == 'Modificada') ...[
-                // Campos adicionales para TIR Modificada
-                TextFormField(
-                  controller: _tasaFinanciamientoController,
-                  keyboardType: TextInputType.number,
-                  decoration: InputDecoration(
-                      labelText: 'Tasa de Financiamiento (%)'),
-                  validator: (value) {
-                    if (_tipoTIR == 'Modificada' &&
-                        (value == null || value.isEmpty)) {
-                      return 'Por favor ingrese la tasa de financiamiento';
-                    }
-                    return null;
-                  },
-                ),
-                TextFormField(
-                  controller: _tasaReinversionController,
-                  keyboardType: TextInputType.number,
-                  decoration:
-                      InputDecoration(labelText: 'Tasa de Reinversión (%)'),
-                  validator: (value) {
-                    if (_tipoTIR == 'Modificada' &&
-                        (value == null || value.isEmpty)) {
-                      return 'Por favor ingrese la tasa de reinversión';
-                    }
-                    return null;
-                  },
-                ),
-              ],
               SizedBox(height: 20),
               ElevatedButton(
                 onPressed: _calcularTIR,

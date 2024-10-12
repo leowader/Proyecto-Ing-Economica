@@ -1,51 +1,54 @@
 import 'dart:math';
 
 class CalcularTIR {
-  // Método para calcular la TIR Simple
-  double calcularTIRSimple(List<double> flujos, double inversionInicial, double tasaInicial) {
-    double tir = tasaInicial;
-    double precision = 0.0001;
-    double variacion = 1.0;
+  // Método para calcular la TIR usando la fórmula estándar
+  double calcularTIR(List<double> flujos, double inversionInicial) {
+    // Aproximación inicial de TIR
+    double tir = 0.1; // TIR inicial (10%)
+    double precision = 0.0001; // Precisión para detener la búsqueda
+    double van = 0.0;
+    int maxIteraciones = 1000; // Máximo número de iteraciones
 
-    while (variacion.abs() > precision) {
-      double npv = 0.0; // Valor actual neto
-      for (int i = 0; i < flujos.length; i++) {
-        npv += flujos[i] / pow(1 + tir, i + 1);
+    for (int i = 0; i < maxIteraciones; i++) {
+      van = -inversionInicial; // Comenzar con la inversión inicial negativa
+      for (int n = 0; n < flujos.length; n++) {
+        // Cálculo del VAN usando la fórmula dada
+        van += flujos[n] / pow(1 + tir, n + 1);
       }
 
-      npv -= inversionInicial;
-      variacion = npv;
-      tir = tir - (npv / (inversionInicial * flujos.length)); // Ajustar la TIR
-    }
-
-    return tir * 100; // Devolver la TIR en porcentaje
-  }
-
-  // Método para calcular la TIR Modificada (MIRR)
-  double calcularMIRR(List<double> flujos, double inversionInicial, double tasaFinanciamiento, double tasaReinversion) {
-    double valorPresente = 0.0;
-    double valorFuturo = 0.0;
-    int n = flujos.length;
-
-    for (int i = 0; i < n; i++) {
-      if (flujos[i] < 0) {
-        valorPresente += flujos[i] / pow(1 + tasaFinanciamiento, i + 1);
-      } else {
-        valorFuturo += flujos[i] * pow(1 + tasaReinversion, n - (i + 1));
+      if (van.abs() < precision) {
+        return tir * 100; // Devolver TIR en porcentaje
       }
+
+      // Ajustar TIR según si el VAN es positivo o negativo
+      tir += (van > 0) ? 0.01 : -0.01;
     }
 
-    return pow(valorFuturo / -valorPresente, 1 / n) - 1;
+    return tir * 100; // Si no converge, devolver la TIR calculada
   }
 
-  // Método para calcular la TIR Incremental
-  double calcularTIRIncremental(List<double> flujosProyecto1, List<double> flujosProyecto2, double tasaInicial) {
-    List<double> diferenciaFlujos = [];
+  // Método para calcular la TIR usando prueba y error
+  double calcularTIRPruebaError(List<double> flujos, double inversionInicial) {
+    double tir = 0.1; // TIR inicial (10%)
+    double precision = 0.0001; // Precisión para detener la búsqueda
+    double van = 0.0;
+    int maxIteraciones = 1000; // Máximo número de iteraciones
 
-    for (int i = 0; i < flujosProyecto1.length; i++) {
-      diferenciaFlujos.add(flujosProyecto1[i] - flujosProyecto2[i]);
+    for (int i = 0; i < maxIteraciones; i++) {
+      van = -inversionInicial; // Comenzar con la inversión inicial negativa
+      for (int n = 0; n < flujos.length; n++) {
+        // Cálculo del VAN usando la fórmula de prueba y error
+        van += flujos[n] / pow(1 + tir, n); // n+1 para la fórmula estándar, n para prueba y error
+      }
+
+      if (van.abs() < precision) {
+        return tir * 100; // Devolver TIR en porcentaje
+      }
+
+      // Ajustar TIR según si el VAN es positivo o negativo
+      tir += (van > 0) ? 0.01 : -0.01;
     }
 
-    return calcularTIRSimple(diferenciaFlujos, 0, tasaInicial);
+    return tir * 100; // Si no converge, devolver la TIR calculada
   }
 }

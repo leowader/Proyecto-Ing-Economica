@@ -23,6 +23,7 @@ import 'package:ingeconomica/screens/simple/view/simple_tiempo.dart';
 import 'package:ingeconomica/screens/simple/view/simple_view.dart';
 import 'package:ingeconomica/screens/gradiente_geometrico/view/geometric_value_calculator.dart';
 import 'package:ingeconomica/screens/gradiente_geometrico/view/geometric_series_calculator.dart';
+import 'package:ingeconomica/screens/tir/view/tir_form.dart';
 
 var routes = <String, WidgetBuilder>{
   "/": (_) => const HomeScreen(
@@ -45,6 +46,7 @@ var routes = <String, WidgetBuilder>{
   "/amortizacion/alemana": (_) => const AlemanaView(),
   "/amortizacion/americana": (_) =>  AmericaView(),
   "/inflacion": (_) => const Inflacion(),
+  "/tir": (_)=>  TIRView(),
 
   "/aritmetico": (_) => const AritmeticoView(),
   "/aritmetico/valorpresente": (_) => const ValorPresente(),
