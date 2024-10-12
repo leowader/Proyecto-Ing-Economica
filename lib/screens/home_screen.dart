@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:ingeconomica/screens/aritmetico/views/aritmetico_views.dart';
 import 'package:ingeconomica/screens/bonos/views/bonos.dart';
 import 'package:ingeconomica/screens/compuesto/view/compuesto_view.dart';
-import 'package:ingeconomica/screens/gradiente_geometrico/view/GeometricOptionsForm.dart'; 
+import 'package:ingeconomica/screens/gradiente_geometrico/view/GeometricOptionsForm.dart';
 import 'package:ingeconomica/screens/gradiente_geometrico/view/geometric_value_calculator.dart';
 import 'package:ingeconomica/screens/gradiente_geometrico/view/geometric_series_calculator.dart';
 import 'package:ingeconomica/screens/simple/services/interes_calculator.dart';
 import 'package:ingeconomica/screens/simple/view/simple_view.dart';
+import 'package:ingeconomica/screens/tir/view/tir_form.dart';
 
 class HomeScreen extends StatefulWidget {
   final String username;
@@ -50,10 +51,13 @@ class _HomeScreenState extends State<HomeScreen> {
           builder: (context) => const Bonos(),
         ),
       );
-    } else {
-      setState(() {
-        _selectedOptionIndex = index; 
-      });
+    } else if (index == 9) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) =>  TIRView(),
+        ),
+      );
     }
   }
 
@@ -147,9 +151,10 @@ class _HomeScreenState extends State<HomeScreen> {
               buildGridItem(context, "G. Geométrico", Icons.functions, 3),
               buildGridItem(context, "G. Aritmético", Icons.bar_chart, 4),
               buildGridItem(context, "Amortizacion", Icons.monetization_on, 0),
-              buildGridItem(context, "TIR", Icons.monetization_on, 0),
+              buildGridItem(context, "TIR", Icons.monetization_on, 9),
               buildGridItem(context, "UVR", Icons.monetization_on, 0),
-              buildGridItem(context, "Bonos", Icons.monetization_on, 7), // Opción de Bonos
+              buildGridItem(context, "Bonos", Icons.monetization_on,
+                  7), // Opción de Bonos
               buildGridItem(context, "Inflacion", Icons.monetization_on, 8),
               buildGridItem(context, "Préstamos", Icons.monetization_on, 0),
               buildGridItem(context, "Gestión de Pagos", Icons.payment, 0),
