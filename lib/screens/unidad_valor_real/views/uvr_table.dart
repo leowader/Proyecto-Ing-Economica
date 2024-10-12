@@ -31,7 +31,7 @@ class UnidadValorRealTablaState extends State<UnidadValorRealTabla> {
     print(periodoCalculo);
     
       setState(() {
-        _fechas = _calculator.createDates(fechaI: fInicio);
+        _fechas = _calculator.createDates(fechaI: fInicio, periodo: periodoCalculo);
         _uVRAmount = _calculator.calculateListUVR(
           valorMoneda: valorA, 
           variacion: variacion, 
@@ -56,6 +56,7 @@ class UnidadValorRealTablaState extends State<UnidadValorRealTabla> {
     if (picked != null) {
       setState(() {
         controller.text = _calculator.formatDate(picked);
+        _endDateController.text = _calculator.formatDate(DateTime(picked.year,picked.month+1,picked.day));
       });
     }
   }
@@ -108,10 +109,6 @@ class UnidadValorRealTablaState extends State<UnidadValorRealTabla> {
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(30.0),
                     ),
-                    suffixIcon: IconButton(
-                      icon: const Icon(Icons.calendar_today),
-                      onPressed: () => _selectDate(context, _endDateController),
-                    ),
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -150,9 +147,11 @@ class UnidadValorRealTablaState extends State<UnidadValorRealTabla> {
                       child: const Text("Asignar otros valores"),
                     ),
                     const SizedBox(height: 20,),
-                    SizedBox(
-                      width: double.infinity,
+                    Container(
+                      decoration: BoxDecoration(border: Border.all(color: Colors.grey)),
+                      width: 350,
                       height: 400,
+
                       child: ListView(
                         
                       

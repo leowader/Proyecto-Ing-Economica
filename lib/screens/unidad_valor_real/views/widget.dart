@@ -14,45 +14,6 @@ import 'package:flutter/material.dart';
     );
   }
 
-
-class ListaAmortizacion extends StatelessWidget {
-  const ListaAmortizacion({
-    super.key, required this.titulo, required this.van, required this.bSize
-  });
-
-  final String titulo;
-  final List<dynamic> van;
-  final double bSize;
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: MediaQuery.of(context).size.width*0.2,
-      child: Column(
-        children: [
-          Container(
-            alignment: Alignment.center,
-            decoration: const BoxDecoration(color: Colors.orange),
-            height: MediaQuery.of(context).size.width*0.05,
-            width: MediaQuery.of(context).size.width*0.2,
-            child: Text(titulo,)),
-          SizedBox(
-            height: 300,
-            child: ListView.builder(
-              //scrollDirection: Axis.vertical,
-              //shrinkWrap: true,
-              itemCount: van.length,
-              itemBuilder: (BuildContext context, int index) {
-                return ListTile(title: Text("${van[index]}", style: TextStyle(fontSize: bSize), textAlign: TextAlign.center),);
-              },
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-
 class UVRTable extends StatelessWidget {
   const UVRTable({
     super.key, required this.listaN, required this.listaF, required this.listaUVR});
@@ -65,24 +26,25 @@ class UVRTable extends StatelessWidget {
     
     return Column(
       children: [
-
        Container( 
-        decoration: const BoxDecoration(color: Color.fromARGB(0, 180, 180, 180)),
+        alignment: const Alignment(0,0),
+        decoration: const BoxDecoration(color: Color.fromARGB(255, 196, 195, 195),border: Border(bottom: BorderSide(color: Colors.grey))),
         width: double.infinity, 
-        child: const Text('Tabla de UVR', textAlign: TextAlign.center,)),
+        height: 40,
+        child: const Text('Tabla de UVR', textAlign: TextAlign.center,style: TextStyle(fontSize: 20),)),
        SingleChildScrollView(
         
         child: DataTable(
           columns: const [
-            DataColumn(label: Text('N°')),
-            DataColumn(label: Text('Fecha')),
-            DataColumn(label: Text('UVR')),
+            DataColumn(headingRowAlignment: MainAxisAlignment.center,label: Text('N°',)),
+            DataColumn(headingRowAlignment: MainAxisAlignment.center,label: Text('Fecha',textAlign: TextAlign.center,)),
+            DataColumn(headingRowAlignment: MainAxisAlignment.center,label: Text('UVR',textAlign: TextAlign.center,)),
           ],
-          rows: List<DataRow>.generate(listaN.length, (index) {
+          rows: List<DataRow>.generate(listaF.length, (index) {
             return DataRow(cells: [
               DataCell(Text(listaN[index].toString())),
               DataCell(Text(listaF[index])),
-              DataCell(Text(listaUVR[index].toString())),
+              DataCell(Text(listaUVR[index].toStringAsFixed(4))),
             ]);
           }),
         ),

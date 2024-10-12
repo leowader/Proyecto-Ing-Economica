@@ -2,53 +2,41 @@ import 'package:flutter/material.dart';
 import 'package:ingeconomica/screens/alternativa_inversion/services/calculo_eai.dart';
 import 'package:ingeconomica/screens/aritmetico/views/widget.dart';
 
-class EvaluacionAlternativaInversionVPN extends StatefulWidget {
-  const EvaluacionAlternativaInversionVPN({super.key});
+class EvaluacionAlternativaInversionPRIAR extends StatefulWidget {
+  const EvaluacionAlternativaInversionPRIAR({super.key});
 
   @override
-  EvaluacionAlternativaInversionVPNState createState() => EvaluacionAlternativaInversionVPNState();
+  EvaluacionAlternativaInversionPRIARState createState() => EvaluacionAlternativaInversionPRIARState();
 }
 
-class EvaluacionAlternativaInversionVPNState extends State<EvaluacionAlternativaInversionVPN> {
+class EvaluacionAlternativaInversionPRIARState extends State<EvaluacionAlternativaInversionPRIAR> {
   final TextEditingController _valorFCController = TextEditingController();
   final TextEditingController _valorIController = TextEditingController();
-  final TextEditingController _tasaDController = TextEditingController();
   double? _eAIResult;
-  String? _selectedOption2 = "Valor Presente Neto";
-  String? _answerText = "Valor Presente Neto";
+  String _selectedOption3 = 'Mensual';
+  String _anserdate = 'Mensual';
+  String _answerText = 'P.R.I';
   List<double> fcaja = [];
   final EAICalculator _calculator =
       EAICalculator();
 
-
+ String resultado(double invI){
+    return ((fcaja.reduce((value,element) => value+element) > invI)?'P.R:I':'P.R.I(Aprox)');
+  }
   void _calculateEAI() {
-    final double invInicial = double.parse(_valorIController.text);
-    final double tasadescuento = double.parse(_tasaDController.text);
-
-      if(_selectedOption2 == "Valor Presente Neto"){
-        setState(() {
-          _answerText = _selectedOption2;
-          _eAIResult = _calculator.calcularVPN(
-            fcaja: fcaja, 
-            tasadescuento: tasadescuento, 
-            invInicial: invInicial);
-        });
-      }else{
-        final double vpn = _calculator.calcularVPN(
+      final double invInicial = double.parse(_valorIController.text);
+      setState(() {
+        _anserdate = _selectedOption3;
+        _answerText = resultado(invInicial);
+        _eAIResult = _calculator.calculatePRI(
           fcaja: fcaja, 
-          tasadescuento: tasadescuento, 
-          invInicial: invInicial);
-        setState(() {
-          _answerText = _selectedOption2;
-          _eAIResult = _calculator.calculateIR(
-            vpn: vpn, 
-            invInicial: invInicial);
-        });
-      }
+          invInicial: invInicial, 
+          tPerido: _selectedOption3);
+      });
   }
 
   void _addFlujoCaja(){
-    if(_valorFCController.text.isNotEmpty){
+    if(_valorFCController.text.isNotEmpty && double.parse(_valorFCController.text) > 0){
       setState(() {
         fcaja.add(double.parse(_valorFCController.text));
         _valorFCController.text="";
@@ -68,7 +56,7 @@ class EvaluacionAlternativaInversionVPNState extends State<EvaluacionAlternativa
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title:  Text('Calculadora del $_selectedOption2'),
+        title: const Text('Calculadora de Periodo de Recuperación de inversión'),
       ),
       body: Center(
         child: Padding(
@@ -77,40 +65,8 @@ class EvaluacionAlternativaInversionVPNState extends State<EvaluacionAlternativa
             mainAxisSize: MainAxisSize.min,
             children: [
               const SizedBox(height: 20),
-              Container(
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: const Color(0xFFFEF7FF),
-                  borderRadius: BorderRadius.circular(30),
-                  border: Border.all(
-                    color: Colors.grey, // Color del borde
-                    width: 1, // Ancho del borde
-                  ),
-                ),
-                padding: const EdgeInsets.symmetric(horizontal: 12),
-                child: DropdownButtonHideUnderline(
-                  child: DropdownButton<String>(
-                    isExpanded:
-                        true, // Permite que el DropdownButton ocupe todo el ancho disponible
-                    value: _selectedOption2,
-                    onChanged: (String? newValue) {
-                      setState(() {
-                        _selectedOption2 = newValue!;
-                      });
-                    },
-                    items: <String>[
-                      'Valor Presente Neto',
-                      'Indice de Rentabilidad',
-                    ].map<DropdownMenuItem<String>>((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Text(value),
-                      );
-                    }).toList(),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 20),
+              buildTextField(_valorIController, 'Inversion Inicial'),
+              const SizedBox(height: 24),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -145,9 +101,39 @@ class EvaluacionAlternativaInversionVPNState extends State<EvaluacionAlternativa
                   ),
               ),],
               const SizedBox(height: 24),
-              buildTextField(_valorIController, 'Inversion Inicial'),
-              const SizedBox(height: 24),
-              buildTextField(_tasaDController, 'Tasa de descuento (%)'),
+              Container(
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFFEF7FF),
+                    borderRadius: BorderRadius.circular(30),
+                    border: Border.all(
+                      color: Colors.grey, // Color del borde
+                      width: 1, // Ancho del borde
+                    ),
+                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  child: DropdownButtonHideUnderline(
+                    child: DropdownButton<String>(
+                      isExpanded:
+                          true, // Permite que el DropdownButton ocupe todo el ancho disponible
+                      value: _selectedOption3,
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          _selectedOption3 = newValue!;
+                        });
+                      },
+                      items: <String>[
+                        'Mensual',
+                        'Anual',
+                      ].map<DropdownMenuItem<String>>((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(value),
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                ),
               const SizedBox(height: 20),
               SizedBox(
                 width: double.infinity,
@@ -158,7 +144,7 @@ class EvaluacionAlternativaInversionVPNState extends State<EvaluacionAlternativa
                     backgroundColor: const Color(0xFF232323),
                     foregroundColor: Colors.white,
                   ),
-                  child: Text("Calcular $_selectedOption2"),
+                  child: const Text("Calcular Periodo de Recuperación de inversión"),
                 ),
               ),
               const SizedBox(height: 24),
@@ -185,7 +171,7 @@ class EvaluacionAlternativaInversionVPNState extends State<EvaluacionAlternativa
                           Expanded(
                               child: Center(
                             child: Text(
-                              '(E.A.I)${(_answerText=="Valor Presente Neto")?'VPN':'IR'}: ${_eAIResult!.toStringAsFixed(4)}',
+                              '(E.A.I) $_answerText: ${_eAIResult!.toStringAsFixed(2)} ${(_anserdate == 'Mensual')?'Meses':'Años'}',
                               style: const TextStyle(
                                 fontSize: 18,
                                 color: Colors.white,

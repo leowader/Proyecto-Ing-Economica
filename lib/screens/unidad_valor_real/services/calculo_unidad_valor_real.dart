@@ -23,15 +23,16 @@ class UVRCalculator {
         double result = valorMoneda * pow(1 + variacion,(i+1)/periodoCalculo);
         uvr.add(result);
       }
-
+      print(uvr.length);
       return uvr;
   }
 
   List<DateTime> createDates({
     required DateTime fechaI,
+    required int periodo,
   }){
     List<DateTime> lFechas = [];
-    for (int i=0; i<30; i++){
+    for (int i=0; i<periodo; i++){
       lFechas.add((fechaI.add(Duration(days: i+1))));
     }
 

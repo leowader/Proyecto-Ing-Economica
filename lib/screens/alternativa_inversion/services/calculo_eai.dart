@@ -2,19 +2,6 @@ import 'package:intl/intl.dart';
 import 'dart:math';
 class EAICalculator {
   
-  /*double calculateVPN({
-    required double gasto,
-    required double arrendamiento,
-    required double interes,
-    required double periodo,
-    required double venta,
-  }){
-
-    double vpi = arrendamiento*((pow(1 + interes, periodo)-1)/(interes*pow(1 + interes, periodo)))+(venta/pow(1 + interes,periodo));
-    double vpn = vpi - gasto; 
-    return vpn;
-  }*/
-
   double calcularVPN({
     required List<double> fcaja,
     required double tasadescuento,
@@ -32,7 +19,7 @@ class EAICalculator {
     return vpn;
   }
 
-  double calculateIR({
+   double calculateIR({
     required double vpn,
     required double invInicial,
   }){
@@ -40,56 +27,36 @@ class EAICalculator {
     return iR;
   }
 
-  double calculateTIRPE({
-    required List<double> flcaja,
-    required double tasadescuento,
-    required double invInicial
-  }){
-    tasadescuento = tasadescuento/100;
-    int maxIteraciones = 500;
-    late double tir = tasadescuento;
-    List<double>fc = [-invInicial] + flcaja;
-    for (int i = 0; i < maxIteraciones; i++) {
-    double vpn = 0.0;
-    double vpnDerivada = 0.0;
-    double tolerancia = 1e-6;
-    for (int t = 0; t < fc.length; t++) {
-      vpn += fc[t] / pow(1 + tir, t);
-      vpnDerivada += -t * fc[t] / pow(1 + tir, t + 1);
-    }
-    // Verificamos si el VPN está dentro de la tolerancia
-    if (vpn.abs() < tolerancia) {
-      tir = tir*100;
-      return tir;
-    }
-    // Actualizamos la tir usando el método de Newton-Raphson
-    tir -= vpn / vpnDerivada;
-  }
-  print(tir);
-  tir = tir*100;
-  return tir;
-  }
-
-  double calculateTIRIL({
+  double calculatePRI({
     required List<double> fcaja,
-    required double tasadescuento,
-    required double tasadescuento2,
     required double invInicial,
+    required String tPerido,
   }){
-    double vpn1 = calcularVPN(fcaja: fcaja, tasadescuento: tasadescuento, invInicial: invInicial);
-    double vpn2 = calcularVPN(fcaja: fcaja, tasadescuento: tasadescuento2, invInicial: invInicial);
-    double tir = tasadescuento+(vpn1/(vpn1-vpn2))*(tasadescuento2-tasadescuento);
-    print(tir);
-    return tir;
-  }
+    double progreso = -invInicial;
+    double anteriorValor = 0;
+    for (int i=0;i<fcaja.length;i++){
+      anteriorValor = progreso;
+      progreso = progreso +fcaja[i];
+      if (progreso > 0){
+        double tri =0;
+        tri = i-(anteriorValor/fcaja[i]);
+        return tri; 
+      }
+    }
+    if (progreso < 0){
+      double prom = (fcaja.reduce((value, element) => value + element)/fcaja.length);
+      int i =0;
+      while (progreso < 0){
+        anteriorValor = progreso;
+        progreso = progreso + prom;
+        i++; 
+      }
+      double tri =0;
+      tri = (((i-1)+fcaja.length)-(anteriorValor/prom));
 
-  double calculateTIRA({
-    required double cajaUnico,
-    required double invInicial,
-    required double periodo,
-  }){
-    double tir = pow(cajaUnico/invInicial, 1/periodo)-1;
-    return (tir*100);
+     return tri;
+    }
+    return 0;
   }
   
   double calculatePeriod({

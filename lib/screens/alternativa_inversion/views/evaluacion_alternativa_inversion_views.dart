@@ -26,10 +26,10 @@ class EvaluacionAlternativaInversionView extends StatelessWidget {
                 width: 250, // Ancho específico para todos los botones
                 child: ElevatedButton.icon(
                   onPressed: () {
-                    Navigator.pushNamed(context, "/evaluacionai/vpn");
+                    Navigator.pushNamed(context, "/evaluacionai/vpn_ir");
                   },
                   icon: const Icon(Icons.calculate),
-                  label: const Text("VPN/IR"),
+                  label: const Text("V.P.N/I.R"),
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(
                         vertical: 16, horizontal: 24),
@@ -43,10 +43,10 @@ class EvaluacionAlternativaInversionView extends StatelessWidget {
                 width: 250,
                 child: ElevatedButton.icon(
                   onPressed: () {
-                    Navigator.pushNamed(context, "/evaluacionai/tir");
+                    Navigator.pushNamed(context, "/evaluacionai/pri");
                   },
-                  icon: const Icon(Icons.view_timeline_rounded),
-                  label: const Text("Tasa de Inversion de retorno"),
+                  icon: const Icon(Icons.timelapse),
+                  label: const Text("Periodo de Recuperación"),
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(
                         vertical: 16, horizontal: 24),

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:ingeconomica/screens/alternativa_inversion/views/eai_tir.dart';
+import 'package:ingeconomica/screens/alternativa_inversion/views/eai_pri.dart';
 import 'package:ingeconomica/screens/alternativa_inversion/views/eai_vpn.dart';
 import 'package:ingeconomica/screens/alternativa_inversion/views/evaluacion_alternativa_inversion_views.dart';
 import 'package:ingeconomica/screens/aritmetico/views/aritmetico_cuota_especifica.dart';
@@ -50,6 +50,6 @@ var routes = <String, WidgetBuilder>{
   "/unidadvalorreal/valor": (_) => const UnidadValorReal(),
   "/unidadvalorreal/tabla": (_) => const UnidadValorRealTabla(),
   "/evaluacionai": (_) => const EvaluacionAlternativaInversionView(),
-  "/evaluacionai/vpn": (_) => const EvaluacionAlternativaInversionVPN(),
-  "/evaluacionai/tir": (_) => const EvaluacionAlternativaInversionTIR(),
+  "/evaluacionai/vpn_ir": (_) => const EvaluacionAlternativaInversionVPN(),
+  "/evaluacionai/pri": (_) => const EvaluacionAlternativaInversionPRIAR(),
 };
