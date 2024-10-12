@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:ingeconomica/screens/amortizacion/view/amortizacion_view.dart';
 import 'package:ingeconomica/screens/aritmetico/views/aritmetico_views.dart';
 import 'package:ingeconomica/screens/bonos/views/bonos.dart';
 import 'package:ingeconomica/screens/compuesto/view/compuesto_view.dart';
 import 'package:ingeconomica/screens/gradiente_geometrico/view/GeometricOptionsForm.dart';
-import 'package:ingeconomica/screens/gradiente_geometrico/view/geometric_value_calculator.dart';
-import 'package:ingeconomica/screens/gradiente_geometrico/view/geometric_series_calculator.dart';
+import 'package:ingeconomica/screens/inflacion/view/inflacion.dart';
 import 'package:ingeconomica/screens/simple/services/interes_calculator.dart';
 import 'package:ingeconomica/screens/simple/view/simple_view.dart';
-import 'package:ingeconomica/screens/tir/view/tir_form.dart';
+
 
 class HomeScreen extends StatefulWidget {
   final String username;
@@ -23,54 +23,36 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
   int _selectedOptionIndex = 0; // Índice para las opciones de la lista
-  Widget? _selectedSubView; // Muestra la vista seleccionada en el submenú
 
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
       _selectedOptionIndex =
           0; // Resetear al menú principal al cambiar de sección
-      _selectedSubView = null; // Limpiar la vista seleccionada
     });
   }
 
+  // Ahora manejamos la navegación internamente, cambiando el índice de las opciones
   void _onOptionTapped(int index) {
-    if (index == 3) {
-      // Si selecciona "G. Geométrico", navega al formulario
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const GeometricOptionsForm(),
-        ),
-      );
-    } else if (index == 7) {
-      // Si selecciona "Bonos", navega a la vista de Bonos
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const Bonos(),
-        ),
-      );
-    } else if (index == 9) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) =>  TIRView(),
-        ),
-      );
-    }
+    setState(() {
+      _selectedOptionIndex = index;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     final InterestCalculator calculator = InterestCalculator();
+
+    // Incluimos todas las opciones dentro de listOptions
     List<Widget> listOptions = [
       buildMainMenu(context, calculator),
       const SimpleView(),
       const CompuestoView(),
-      _selectedSubView ??
-          const SizedBox.shrink(), // Mostrar la vista seleccionada del submenú
-      const AritmeticoView()
+      const GeometricOptionsForm(),
+      const AritmeticoView(),
+      const AmortizacionView(),
+      const Bonos(), // Bonos ahora se maneja dentro del stack
+      const Inflacion(), // Inflación ahora se maneja dentro del stack
     ];
 
     return Scaffold(
@@ -150,14 +132,9 @@ class _HomeScreenState extends State<HomeScreen> {
               buildGridItem(context, "Interés Compuesto", Icons.trending_up, 2),
               buildGridItem(context, "G. Geométrico", Icons.functions, 3),
               buildGridItem(context, "G. Aritmético", Icons.bar_chart, 4),
-              buildGridItem(context, "Amortizacion", Icons.monetization_on, 0),
-              buildGridItem(context, "TIR", Icons.monetization_on, 9),
-              buildGridItem(context, "UVR", Icons.monetization_on, 0),
-              buildGridItem(context, "Bonos", Icons.monetization_on,
-                  7), // Opción de Bonos
-              buildGridItem(context, "Inflacion", Icons.monetization_on, 8),
-              buildGridItem(context, "Préstamos", Icons.monetization_on, 0),
-              buildGridItem(context, "Gestión de Pagos", Icons.payment, 0),
+              buildGridItem(context, "Amortizacion", Icons.bar_chart, 5),
+              buildGridItem(context, "Bonos", Icons.monetization_on, 6),
+              buildGridItem(context, "Inflacion", Icons.monetization_on, 7),
             ],
           ),
         ),

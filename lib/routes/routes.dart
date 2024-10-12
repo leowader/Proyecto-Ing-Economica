@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:ingeconomica/screens/amortizacion/view/alemana_view.dart';
+import 'package:ingeconomica/screens/amortizacion/view/amortizacion_view.dart';
+import 'package:ingeconomica/screens/amortizacion/view/francesa.dart';
 import 'package:ingeconomica/screens/aritmetico/views/aritmetico_cuota_especifica.dart';
 import 'package:ingeconomica/screens/aritmetico/views/aritmetico_presente.dart';
 import 'package:ingeconomica/screens/aritmetico/views/aritmetico_presente_infinito.dart';
@@ -10,6 +13,7 @@ import 'package:ingeconomica/screens/compuesto/view/montofuturo.dart';
 import 'package:ingeconomica/screens/compuesto/view/tasaInteres.dart';
 import 'package:ingeconomica/screens/compuesto/view/tiempo.dart';
 import 'package:ingeconomica/screens/home_screen.dart';
+import 'package:ingeconomica/screens/inflacion/view/inflacion.dart';
 import 'package:ingeconomica/screens/login.dart';
 import 'package:ingeconomica/screens/register.dart';
 import 'package:ingeconomica/screens/simple/view/simple_forms.dart';
@@ -35,6 +39,11 @@ var routes = <String, WidgetBuilder>{
   "/compuesto/montofuturo": (_) => const Montofuturo(),
   "/compuesto/tasainteres": (_) => const TasaInteres(),
   "/compuesto/tiempo": (_) => const Tiempo(),
+  "/amortizacion": (_) => const AmortizacionView(),
+  "/amortizacion/francesa": (_) => const Francesa(),
+  "/amortizacion/alemana": (_) => const AlemanaView(),
+  "/inflacion": (_) => const Inflacion(),
+
   "/aritmetico": (_) => const AritmeticoView(),
   "/aritmetico/valorpresente": (_) => const ValorPresente(),
   "/aritmetico/valorfuturo": (_) => const ValorFuturo(),
