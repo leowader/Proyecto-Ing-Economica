@@ -135,6 +135,7 @@ class _HomeScreenState extends State<HomeScreen> {
               buildGridItem(context, "Amortizacion", Icons.bar_chart, 5),
               buildGridItem(context, "Bonos", Icons.monetization_on, 6),
               buildGridItem(context, "Inflacion", Icons.monetization_on, 7),
+              buildGridItem(context, "Tir", Icons.monetization_on, 8),
             ],
           ),
         ),

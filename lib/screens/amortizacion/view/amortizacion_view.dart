@@ -56,6 +56,23 @@ class AmortizacionView extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 24),
+              SizedBox(
+                width: 250,
+                child: ElevatedButton.icon(
+                  onPressed: () {
+                    Navigator.pushNamed(context, "/amortizacion/americana");
+                  },
+                  icon: const Icon(Icons.account_balance),
+                  label: const Text("Amortizacion Americana"),
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 16, horizontal: 24),
+                    backgroundColor: const Color(0xFF232323),
+                    foregroundColor: Colors.white,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 24),
             ],
           ),
         ),

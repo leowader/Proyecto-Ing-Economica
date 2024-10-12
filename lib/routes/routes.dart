@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ingeconomica/screens/amortizacion/view/alemana_view.dart';
+import 'package:ingeconomica/screens/amortizacion/view/americana_view.dart';
 import 'package:ingeconomica/screens/amortizacion/view/amortizacion_view.dart';
 import 'package:ingeconomica/screens/amortizacion/view/francesa.dart';
 import 'package:ingeconomica/screens/aritmetico/views/aritmetico_cuota_especifica.dart';
@@ -42,6 +43,7 @@ var routes = <String, WidgetBuilder>{
   "/amortizacion": (_) => const AmortizacionView(),
   "/amortizacion/francesa": (_) => const Francesa(),
   "/amortizacion/alemana": (_) => const AlemanaView(),
+  "/amortizacion/americana": (_) =>  AmericaView(),
   "/inflacion": (_) => const Inflacion(),
 
   "/aritmetico": (_) => const AritmeticoView(),
