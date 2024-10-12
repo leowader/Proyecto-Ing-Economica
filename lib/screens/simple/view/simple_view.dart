@@ -6,10 +6,7 @@ class SimpleView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Interés Simple"),
-        centerTitle: true,
-      ),
+  
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(24.0),

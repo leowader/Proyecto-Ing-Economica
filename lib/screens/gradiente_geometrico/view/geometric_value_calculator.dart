@@ -5,6 +5,7 @@ class GeometricValueCalculator extends StatefulWidget {
   const GeometricValueCalculator({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _GeometricValueCalculatorState createState() =>
       _GeometricValueCalculatorState();
 }

@@ -1,5 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:ingeconomica/screens/amortizacion/view/amortizacion_view.dart';
+import 'package:ingeconomica/screens/aritmetico/views/aritmetico_views.dart';
+import 'package:ingeconomica/screens/bonos/views/bonos.dart';
+import 'package:ingeconomica/screens/compuesto/view/compuesto_view.dart';
+import 'package:ingeconomica/screens/gradiente_geometrico/view/GeometricOptionsForm.dart';
+import 'package:ingeconomica/screens/inflacion/view/inflacion.dart';
 import 'package:ingeconomica/screens/simple/services/interes_calculator.dart';
+import 'package:ingeconomica/screens/simple/view/simple_view.dart';
+import 'package:ingeconomica/screens/tir/view/tir_form.dart';
+
 
 class HomeScreen extends StatefulWidget {
   final String username;
@@ -9,140 +18,156 @@ class HomeScreen extends StatefulWidget {
       {super.key, required this.username, required this.initialAmount});
 
   @override
-  // ignore: library_private_types_in_public_api
   _HomeScreenState createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
+  int _selectedOptionIndex = 0; // Índice para las opciones de la lista
 
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
+      _selectedOptionIndex =
+          0; // Resetear al menú principal al cambiar de sección
+    });
+  }
+
+  // Ahora manejamos la navegación internamente, cambiando el índice de las opciones
+  void _onOptionTapped(int index) {
+    setState(() {
+      _selectedOptionIndex = index;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    final InterestCalculator _calculator = InterestCalculator();
+    final InterestCalculator calculator = InterestCalculator();
+
+    // Incluimos todas las opciones dentro de listOptions
+    List<Widget> listOptions = [
+      buildMainMenu(context, calculator),
+      const SimpleView(),
+      const CompuestoView(),
+      const GeometricOptionsForm(),
+      const AritmeticoView(),
+      const AmortizacionView(),
+      const Bonos(), // Bonos ahora se maneja dentro del stack
+      const Inflacion(), // Inflación ahora se maneja dentro del stack
+      TIRView(),
+    ];
 
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: const Color(0xFF232323), // Set AppBar color to #232323
-        title: const Center(
-            child: Text(
-          "Menu Principal",
-          style: TextStyle(color: Color.fromARGB(255, 255, 255, 255)),
-        )),
-      ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+      body: IndexedStack(
+        index: _selectedIndex,
         children: [
-          const Padding(
-            padding: EdgeInsets.all(16.0),
+          IndexedStack(
+            index: _selectedOptionIndex,
+            children: listOptions,
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20.0),
-            child: Column(
-              children: [
-                Text(
-                  'Bienvenido, ${widget.username}',
-                  style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFF232323)),
-                ),
-                const SizedBox(height: 10),
-                Text(
-                  'Total: \$${_calculator.formatNumber(widget.initialAmount)}',
-                  style:
-                      const TextStyle(fontSize: 18, color: Color(0xFF232323)),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 20),
-          Expanded(
-            child: GridView.count(
-              crossAxisCount: 3, // Tres columnas
-              mainAxisSpacing: 20,
-              crossAxisSpacing: 20,
-              padding: const EdgeInsets.all(20.0),
-              children: [
-                buildGridItem(context, "Interés Simple", Icons.attach_money,
-                    "/simple"), // Icono de dinero
-                buildGridItem(context, "Interés compuesto", Icons.trending_up,
-                    "/compuesto"), // Icono de crecimiento
-                buildGridItem(context, "G. geométrico", Icons.functions,
-                    "/geometric/value"), // Icono de funciones matemáticas
-                buildGridItem(context, "G. Aritmético", Icons.bar_chart,
-                    "/aritmetico"), // Icono de gráfico de barras
-                buildGridItem(context, "Unidad Valor Real", Icons.monetization_on,
-                    "/unidadvalorreal"), // Icono de moneda
-                buildGridItem(context, "E.A.I", Icons.payment,
-                    "/evaluacionai"), // Icono de pago
-              ],
-            ),
-          ),
+          buildMovimientosScreen(),
+          buildServiciosScreen(),
         ],
       ),
-      bottomNavigationBar: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(20.0),
-            topRight: Radius.circular(20.0),
+      bottomNavigationBar: BottomNavigationBar(
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Inicio',
           ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.withOpacity(0.3),
-              spreadRadius: 5,
-              blurRadius: 10,
-              offset: const Offset(0, 3), // changes position of shadow
-            ),
-          ],
+          BottomNavigationBarItem(
+            icon: Icon(Icons.receipt),
+            label: 'Movimientos',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.grid_view),
+            label: 'Servicios',
+          ),
+        ],
+        currentIndex: _selectedIndex,
+        selectedItemColor: const Color(0xFFD6D6D6),
+        unselectedItemColor: const Color.fromARGB(255, 255, 255, 255),
+        backgroundColor: const Color(0xFF232323),
+        onTap: _onItemTapped,
+        type: BottomNavigationBarType.fixed,
+      ),
+    );
+  }
+
+  // Widget para la pantalla del menú principal
+  Widget buildMainMenu(BuildContext context, InterestCalculator calculator) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        const Padding(
+          padding: EdgeInsets.all(16.0),
         ),
-        child: ClipRRect(
-          borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(20.0),
-            topRight: Radius.circular(20.0),
-          ),
-          child: BottomNavigationBar(
-            items: const <BottomNavigationBarItem>[
-              BottomNavigationBarItem(
-                icon: Icon(Icons.home),
-                label: 'Inicio',
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20.0),
+          child: Column(
+            children: [
+              Text(
+                'Bienvenido, ${widget.username}',
+                style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF232323),
+                ),
               ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.receipt),
-                label: 'Movimientos',
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.grid_view),
-                label: 'Servicios',
+              const SizedBox(height: 10),
+              Text(
+                'Total: \$${calculator.formatNumber(widget.initialAmount)}',
+                style: const TextStyle(fontSize: 18, color: Color(0xFF232323)),
               ),
             ],
-            currentIndex: _selectedIndex,
-            selectedItemColor:
-                const Color(0xFFD6D6D6), // Color of the active item
-            unselectedItemColor: const Color.fromARGB(
-                255, 255, 255, 255), // Color of inactive items
-            backgroundColor:
-                const Color(0xFF232323), // Background color for the navbar
-            onTap: _onItemTapped,
-            type: BottomNavigationBarType
-                .fixed, // Fixed type for evenly spaced items
           ),
         ),
+        const SizedBox(height: 20),
+        Expanded(
+          child: GridView.count(
+            crossAxisCount: 3,
+            mainAxisSpacing: 20,
+            crossAxisSpacing: 20,
+            padding: const EdgeInsets.all(20.0),
+            children: [
+              buildGridItem(context, "Interés Simple", Icons.attach_money, 1),
+              buildGridItem(context, "Interés Compuesto", Icons.trending_up, 2),
+              buildGridItem(context, "G. Geométrico", Icons.functions, 3),
+              buildGridItem(context, "G. Aritmético", Icons.bar_chart, 4),
+              buildGridItem(context, "Amortizacion", Icons.bar_chart, 5),
+              buildGridItem(context, "Bonos", Icons.monetization_on, 6),
+              buildGridItem(context, "Inflacion", Icons.monetization_on, 7),
+              buildGridItem(context, "Tir", Icons.monetization_on, 8),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget buildMovimientosScreen() {
+    return const Center(
+      child: Text(
+        'Pantalla de Movimientos',
+        style: TextStyle(fontSize: 20),
+      ),
+    );
+  }
+
+  Widget buildServiciosScreen() {
+    return const Center(
+      child: Text(
+        'Pantalla de Servicios',
+        style: TextStyle(fontSize: 20),
       ),
     );
   }
 
   Widget buildGridItem(
-      BuildContext context, String title, IconData icon, String route) {
+      BuildContext context, String title, IconData icon, int optionIndex) {
     return GestureDetector(
       onTap: () {
-        Navigator.pushNamed(context, route);
+        _onOptionTapped(optionIndex); // Cambiar la opción seleccionada
       },
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -151,16 +176,15 @@ class _HomeScreenState extends State<HomeScreen> {
             width: 60,
             height: 60,
             decoration: const BoxDecoration(
-              color: Color(0xFF232323), // Dark gray background for icons
+              color: Color(0xFF232323),
               shape: BoxShape.circle,
             ),
-            child: Icon(icon, color: Colors.white, size: 30), // White icons
+            child: Icon(icon, color: Colors.white, size: 30),
           ),
           const SizedBox(height: 10),
           Text(
             title,
-            style: const TextStyle(
-                fontSize: 14, color: Color(0xFF232323)), // Dark gray text color
+            style: const TextStyle(fontSize: 14, color: Color(0xFF232323)),
             textAlign: TextAlign.center,
           ),
         ],

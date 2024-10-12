@@ -2,14 +2,14 @@ import 'package:intl/intl.dart';
 import 'dart:math';
 
 class InterestCalculator {
+  //MONTO FINAL
   double calculateFutureAmount({
     required double capital,
     required double rate,
     required DateTime startDate,
     required DateTime endDate,
   }) {
-    final double time = endDate.difference(startDate).inDays / 365;
-    print('fecha :${time}');
+    final double time = endDate.difference(startDate).inDays / 360;
     return capital * (1 + (rate / 100) * time);
   }
 
@@ -19,11 +19,12 @@ class InterestCalculator {
     required DateTime startDate,
     required DateTime endDate,
   }) {
+    print("aquiii");
     final int days = endDate.difference(startDate).inDays;
-    final double periodInYears = days / 365.0;
+    final double periodInYears = days / 360;
 
     double rate = (pow(futureAmount / capital, 1 / periodInYears) - 1) * 100;
-
+    print(rate);
     return rate;
   }
 
@@ -65,7 +66,7 @@ class InterestCalculator {
     final tasa = rate / 100;
     final division = ((tasa * tiempo));
     print(double.parse(division.toStringAsFixed(1)));
-    final resultado = (finalCapital  / (tasa * tiempo));
+    final resultado = (finalCapital / (tasa * tiempo));
     return resultado;
   }
 
@@ -76,10 +77,11 @@ class InterestCalculator {
       required int tiempo,
       required DateTime endDate}) {
     final tasa = rate / 100;
-    final division = (1 + tasa * tiempo);
 
-    final resultado =
-        (finalCapital / division);
+    final division = (1 + double.parse(tasa.toStringAsFixed(2)) * tiempo);
+    print('${finalCapital } / ${double.parse(division.toStringAsFixed(1))}');
+
+    final resultado = (finalCapital / division);
     return resultado;
   }
 }

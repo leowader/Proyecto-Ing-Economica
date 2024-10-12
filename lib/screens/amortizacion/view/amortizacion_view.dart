@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 
-class CompuestoView extends StatelessWidget {
-  const CompuestoView({super.key});
+class AmortizacionView extends StatelessWidget {
+  const AmortizacionView({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text("Amortizacion"),
+        centerTitle: true,
+      ),
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(24.0),
@@ -22,10 +26,10 @@ class CompuestoView extends StatelessWidget {
                 width: 250, // Ancho específico para todos los botones
                 child: ElevatedButton.icon(
                   onPressed: () {
-                    Navigator.pushNamed(context, "/compuesto/montofuturo");
+                    Navigator.pushNamed(context, "/amortizacion/francesa");
                   },
                   icon: const Icon(Icons.calculate),
-                  label: const Text("Monto Futuro"),
+                  label: const Text("Amortizacion Francesa"),
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(
                         vertical: 16, horizontal: 24),
@@ -39,10 +43,10 @@ class CompuestoView extends StatelessWidget {
                 width: 250,
                 child: ElevatedButton.icon(
                   onPressed: () {
-                    Navigator.pushNamed(context, "/compuesto/tasainteres");
+                    Navigator.pushNamed(context, "/amortizacion/alemana");
                   },
                   icon: const Icon(Icons.account_balance),
-                  label: const Text("Tasa Interes"),
+                  label: const Text("Amortizacion Alemana"),
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(
                         vertical: 16, horizontal: 24),
@@ -56,10 +60,10 @@ class CompuestoView extends StatelessWidget {
                 width: 250,
                 child: ElevatedButton.icon(
                   onPressed: () {
-                    Navigator.pushNamed(context, "/compuesto/tiempo");
+                    Navigator.pushNamed(context, "/amortizacion/americana");
                   },
-                  icon: const Icon(Icons.access_time),
-                  label: const Text("Tiempo"),
+                  icon: const Icon(Icons.account_balance),
+                  label: const Text("Amortizacion Americana"),
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(
                         vertical: 16, horizontal: 24),
@@ -68,6 +72,7 @@ class CompuestoView extends StatelessWidget {
                   ),
                 ),
               ),
+              const SizedBox(height: 24),
             ],
           ),
         ),

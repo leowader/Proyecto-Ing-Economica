@@ -1,25 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:ingeconomica/screens/compuesto/services/calcularTiempo.dart';
+import 'package:ingeconomica/screens/amortizacion/francesa/services/calcularFrancesar.dart';
 
-class Tiempo extends StatefulWidget {
-  const Tiempo({super.key});
+class Francesa extends StatefulWidget {
+  const Francesa({super.key});
 
   @override
-  State<Tiempo> createState() => _Tiempo();
+  State<Francesa> createState() => _FrancesaState();
 }
 
-class _Tiempo extends State<Tiempo> {
+class _FrancesaState extends State<Francesa> {
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController _montoFuturoController = TextEditingController();
-  final TextEditingController _rateController = TextEditingController();
-  final TextEditingController _capitalController = TextEditingController();
-  //final TextEditingController _startDateController = TextEditingController();
-  //final TextEditingController _endDateController = TextEditingController();
-  //final TextEditingController _daysController = TextEditingController();
-  //final TextEditingController _monthsController = TextEditingController();
-  //final TextEditingController _yearsController = TextEditingController();
+  final TextEditingController _montoprestamo = TextEditingController();
+  final TextEditingController _tasaInteresAnual = TextEditingController();
+  final TextEditingController _plazoMeses = TextEditingController();
+
   double? _futureAmount;
-  //bool _knowsExactDates = true;
+  bool _knowsExactDates = true;
   String frecuenciaSeleccionada = 'Anual';
   final Map<String, int> opcionesFrecuencia = {
     'Anual': 1,
@@ -30,36 +26,19 @@ class _Tiempo extends State<Tiempo> {
     'Mensual': 12
   };
 
-  final TiempoCalculator _calculator = TiempoCalculator();
+  final Calcularfrancesar _calculator = Calcularfrancesar();
 
   void _calculateFutureAmount() {
     if (_formKey.currentState!.validate()) {
-      final double capital = double.parse(_capitalController.text);
-      final double montofuturo = double.parse(_montoFuturoController.text);
-      final double rate = double.parse(_rateController.text);
-      final int veces = opcionesFrecuencia[frecuenciaSeleccionada]!;
+      final double montoPrestamo = double.parse(_montoprestamo.text);
+      final double tasaInteresAnual = double.parse(_tasaInteresAnual.text);
+      final int plazoMeses = int.parse(_plazoMeses.text);
 
       setState(() {
-        _futureAmount = _calculator.calculateTiempo(
-            capital: capital,
-            interes: rate / 100,
-            vecesporano: veces,
-            montofuturo: montofuturo);
-      });
-    }
-  }
-
-  Future<void> _selectDate(
-      BuildContext context, TextEditingController controller) async {
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(2000),
-      lastDate: DateTime(2101),
-    );
-    if (picked != null) {
-      setState(() {
-        controller.text = _calculator.formatDate(picked);
+        _futureAmount = _calculator.calculateFutureAmount(
+            montoPrestamo: montoPrestamo,
+            plazoMeses: plazoMeses,
+            tasaInteresAnual: tasaInteresAnual);
       });
     }
   }
@@ -68,7 +47,7 @@ class _Tiempo extends State<Tiempo> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Cálculo del Tiempo"),
+        title: const Text("Cálculo de Amortizacion Francesa"),
         centerTitle: true,
       ),
       body: Padding(
@@ -79,10 +58,10 @@ class _Tiempo extends State<Tiempo> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               TextFormField(
-                controller: _capitalController,
+                controller: _montoprestamo,
                 keyboardType: TextInputType.number,
                 decoration: InputDecoration(
-                  labelText: "Capital Inicial",
+                  labelText: "Monto del Prestamo",
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(30.0),
                   ),
@@ -95,72 +74,42 @@ class _Tiempo extends State<Tiempo> {
                 },
               ),
               const SizedBox(height: 24),
-              Container(
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: const Color(0xFFFEF7FF),
-                  borderRadius: BorderRadius.circular(30),
-                  border: Border.all(
-                    color: Colors.grey, // Color del borde
-                    width: 1, // Ancho del borde
-                  ),
-                ),
-                padding: const EdgeInsets.symmetric(horizontal: 12),
-                child: DropdownButtonHideUnderline(
-                  child: DropdownButton<String>(
-                    isExpanded:
-                        true, // Permite que el DropdownButton ocupe todo el ancho disponible
-                    value: frecuenciaSeleccionada,
-                    onChanged: (String? nuevoValor) {
-                      setState(() {
-                        frecuenciaSeleccionada = nuevoValor!;
-                      });
-                    },
-                    items: opcionesFrecuencia.keys
-                        .map<DropdownMenuItem<String>>((String valor) {
-                      return DropdownMenuItem<String>(
-                        value: valor,
-                        child: Text(valor),
-                      );
-                    }).toList(),
-                  ),
-                ),
-              ),
               const SizedBox(height: 24),
               TextFormField(
-                controller: _montoFuturoController,
+                controller: _tasaInteresAnual,
                 keyboardType: TextInputType.number,
                 decoration: InputDecoration(
-                  labelText: "Monto Futuro",
+                  labelText: "Tasa de Interés Anual (%)",
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(30.0),
                   ),
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Por favor ingrese el monto futuro';
+                    return 'Por favor ingrese la tasa de interés';
                   }
                   return null;
                 },
               ),
               const SizedBox(height: 20),
               TextFormField(
-                controller: _rateController,
+                controller: _plazoMeses,
                 keyboardType: TextInputType.number,
                 decoration: InputDecoration(
-                  labelText: "Tasa de interes %",
+                  labelText: "Ingrese el plazo en meses",
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(30.0),
                   ),
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Por favor ingrese el monto futuro';
+                    return 'Por favor ingrese la tasa de interés';
                   }
                   return null;
                 },
               ),
-              const SizedBox(height: 30),
+              const SizedBox(height: 20),
+              const SizedBox(height: 24),
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
@@ -170,7 +119,7 @@ class _Tiempo extends State<Tiempo> {
                     backgroundColor: const Color(0xFF232323),
                     foregroundColor: Colors.white,
                   ),
-                  child: const Text("Calcular Tiempo"),
+                  child: const Text("Calcular Amortizacion"),
                 ),
               ),
               const SizedBox(height: 20),
@@ -197,7 +146,7 @@ class _Tiempo extends State<Tiempo> {
                           Expanded(
                               child: Center(
                             child: Text(
-                              "Tiempo necesario: ${_calculator.formatNumber(_futureAmount!)} años",
+                              "Amortizacion: ${_calculator.formatNumber(_futureAmount!)}",
                               style: const TextStyle(
                                 fontSize: 18,
                                 color: Colors.white,

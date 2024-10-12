@@ -20,8 +20,9 @@ class _SimpleFormsState extends State<SimpleForms> {
   final TextEditingController _yearsController = TextEditingController();
   double? _result;
   bool _knowsExactDates = true;
-  String _selectedOption = 'Monto futuro'; // Opción seleccionada
+  String _selectedOption = 'Monto futuro';
   final InterestCalculator _calculator = InterestCalculator();
+
   void _calculate() {
     if (_formKey.currentState!.validate()) {
       final double? capital = _capitalController.text.isNotEmpty
@@ -43,7 +44,7 @@ class _SimpleFormsState extends State<SimpleForms> {
         final int years = int.tryParse(_yearsController.text) ?? 0;
         startDate = DateTime.now();
         endDate =
-            startDate.add(Duration(days: days + months * 30 + years * 365));
+            startDate.add(Duration(days: days + months * 30 + years * 360));
       }
 
       setState(() {
@@ -56,17 +57,24 @@ class _SimpleFormsState extends State<SimpleForms> {
               endDate: endDate,
             );
           } else if (_selectedOption == 'Interés') {
-            final futureAmount = _calculator.calculateFutureAmount(
-              capital: capital,
-              rate: rate,
-              startDate: startDate,
-              endDate: endDate,
-            );
-            _result = futureAmount -
-                capital; // Interés pagado es Monto Futuro - Capital Inicial
+            //final double time = endDate.difference(startDate).inDays / 365;
+            final double years =
+                int.tryParse(_yearsController.text)?.toDouble() ?? 0;
+            final double months =
+                (int.tryParse(_monthsController.text)?.toDouble() ?? 0) / 12;
+            final double days =
+                (int.tryParse(_daysController.text)?.toDouble() ?? 0) / 360;
+            final double totalTime = years + months + days;
+            _result = (capital * (rate / 100)) * totalTime;
+          } else if (_selectedOption == 'Capital') {
+            final double time = endDate.difference(startDate).inDays / 360;
+            final tiempo = int.tryParse(_yearsController.text) ??
+                int.tryParse(_monthsController.text) ??
+                int.tryParse(_daysController.text) ??
+                time;
+            _result = (capital / ((rate / 100) * tiempo));
           }
         } else if (capital == null && finalCapital != null) {
-          // Aplicar lógica para calcular el monto usando Capital Final
           if (_selectedOption == 'Principal prestamo') {
             _result = _calculator.calculateInitialCapitalPrestamo(
               finalCapital: finalCapital,
@@ -78,19 +86,6 @@ class _SimpleFormsState extends State<SimpleForms> {
               startDate: startDate,
               endDate: endDate,
             );
-          } else if (_selectedOption == 'Interés') {
-            // Si Capital Final es conocido, calcular el capital inicial
-            final initialCapital = _calculator.calculateInitialCapital(
-              finalCapital: finalCapital,
-              rate: rate,
-              tiempo: int.tryParse(_yearsController.text) ??
-                  int.tryParse(_monthsController.text) ??
-                  int.tryParse(_daysController.text) ??
-                  0,
-              startDate: startDate,
-              endDate: endDate,
-            );
-            _result = finalCapital - initialCapital;
           } else {
             final initialCapital = _calculator.calculateInitialCapital(
               finalCapital: finalCapital,
@@ -102,7 +97,7 @@ class _SimpleFormsState extends State<SimpleForms> {
               startDate: startDate,
               endDate: endDate,
             );
-            _result = initialCapital ;
+            _result = initialCapital;
           }
         }
       });
@@ -131,237 +126,235 @@ class _SimpleFormsState extends State<SimpleForms> {
         title: const Text("Cálculo del Monto"),
         centerTitle: true,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(24.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            children: [
-              TextFormField(
-                controller: _capitalController,
-                keyboardType: TextInputType.number,
-                decoration: InputDecoration(
-                  labelText: "Capital Inicial",
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(30.0),
-                  ),
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return null; // Permitir que esté vacío si el Capital Final está presente
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 24),
-              TextFormField(
-                controller: _finalCapitalController,
-                keyboardType: TextInputType.number,
-                decoration: InputDecoration(
-                  labelText: "Capital Final",
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(30.0),
-                  ),
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return null; // Permitir que esté vacío si el Capital Inicial está presente
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 24),
-              TextFormField(
-                controller: _rateController,
-                keyboardType: TextInputType.number,
-                decoration: InputDecoration(
-                  labelText: "Tasa de Interés (%)",
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(30.0),
-                  ),
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Por favor ingrese la tasa de interés';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 20),
-              SwitchListTile(
-                title: const Text("¿Conoce las fechas exactas del crédito?"),
-                value: _knowsExactDates,
-                onChanged: (bool value) {
-                  setState(() {
-                    _knowsExactDates = value;
-                  });
-                },
-              ),
-              const SizedBox(height: 20),
-              if (_knowsExactDates) ...[
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
                 TextFormField(
-                  controller: _startDateController,
-                  readOnly: true,
+                  controller: _capitalController,
+                  keyboardType: TextInputType.number,
                   decoration: InputDecoration(
-                    labelText: "Fecha de Inicio",
+                    labelText: "Capital Inicial",
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(30.0),
                     ),
-                    suffixIcon: IconButton(
-                      icon: const Icon(Icons.calendar_today),
-                      onPressed: () =>
-                          _selectDate(context, _startDateController),
-                    ),
                   ),
                   validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Por favor ingrese la fecha de inicio';
-                    }
                     return null;
                   },
                 ),
                 const SizedBox(height: 24),
                 TextFormField(
-                  controller: _endDateController,
-                  readOnly: true,
+                  controller: _finalCapitalController,
+                  keyboardType: TextInputType.number,
                   decoration: InputDecoration(
-                    labelText: "Fecha de Finalización",
+                    labelText: "Capital Final",
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(30.0),
                     ),
-                    suffixIcon: IconButton(
-                      icon: const Icon(Icons.calendar_today),
-                      onPressed: () => _selectDate(context, _endDateController),
+                  ),
+                  validator: (value) {
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 24),
+                TextFormField(
+                  controller: _rateController,
+                  keyboardType: TextInputType.number,
+                  decoration: InputDecoration(
+                    labelText: "Tasa de Interés (%)",
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30.0),
                     ),
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Por favor ingrese la fecha de finalización';
+                      return 'Por favor ingrese la tasa de interés';
                     }
                     return null;
                   },
                 ),
-              ] else ...[
-                TextFormField(
-                  controller: _daysController,
-                  keyboardType: TextInputType.number,
-                  decoration: InputDecoration(
-                    labelText: "Número de Días",
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(30.0),
+                const SizedBox(height: 20),
+                SwitchListTile(
+                  title: const Text("¿Conoce las fechas exactas del crédito?"),
+                  value: _knowsExactDates,
+                  onChanged: (bool value) {
+                    setState(() {
+                      _knowsExactDates = value;
+                    });
+                  },
+                ),
+                const SizedBox(height: 20),
+                if (_knowsExactDates) ...[
+                  TextFormField(
+                    controller: _startDateController,
+                    readOnly: true,
+                    decoration: InputDecoration(
+                      labelText: "Fecha de Inicio",
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30.0),
+                      ),
+                      suffixIcon: IconButton(
+                        icon: const Icon(Icons.calendar_today),
+                        onPressed: () =>
+                            _selectDate(context, _startDateController),
+                      ),
                     ),
-                  ),
-                ),
-                const SizedBox(height: 24),
-                TextFormField(
-                  controller: _monthsController,
-                  keyboardType: TextInputType.number,
-                  decoration: InputDecoration(
-                    labelText: "Número de Meses",
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(30.0),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 24),
-                TextFormField(
-                  controller: _yearsController,
-                  keyboardType: TextInputType.number,
-                  decoration: InputDecoration(
-                    labelText: "Número de Años",
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(30.0),
-                    ),
-                  ),
-                ),
-              ],
-              const SizedBox(height: 24),
-              Container(
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: const Color(0xFFFEF7FF),
-                  borderRadius: BorderRadius.circular(30),
-                  border: Border.all(
-                    color: Colors.grey, // Color del borde
-                    width: 1, // Ancho del borde
-                  ),
-                ),
-                padding: const EdgeInsets.symmetric(horizontal: 12),
-                child: DropdownButtonHideUnderline(
-                  child: DropdownButton<String>(
-                    isExpanded:
-                        true, // Permite que el DropdownButton ocupe todo el ancho disponible
-                    value: _selectedOption,
-                    onChanged: (String? newValue) {
-                      setState(() {
-                        _selectedOption = newValue!;
-                      });
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Por favor ingrese la fecha de inicio';
+                      }
+                      return null;
                     },
-                    items: <String>[
-                      'Monto futuro',
-                      'Monto inicial',
-                      'Interés',
-                      'Principal prestamo'
-                    ].map<DropdownMenuItem<String>>((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Text(value),
-                      );
-                    }).toList(),
+                  ),
+                  const SizedBox(height: 24),
+                  TextFormField(
+                    controller: _endDateController,
+                    readOnly: true,
+                    decoration: InputDecoration(
+                      labelText: "Fecha de Finalización",
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30.0),
+                      ),
+                      suffixIcon: IconButton(
+                        icon: const Icon(Icons.calendar_today),
+                        onPressed: () =>
+                            _selectDate(context, _endDateController),
+                      ),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Por favor ingrese la fecha de finalización';
+                      }
+                      return null;
+                    },
+                  ),
+                ] else ...[
+                  TextFormField(
+                    controller: _daysController,
+                    keyboardType: TextInputType.number,
+                    decoration: InputDecoration(
+                      labelText: "Número de Días",
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30.0),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  TextFormField(
+                    controller: _monthsController,
+                    keyboardType: TextInputType.number,
+                    decoration: InputDecoration(
+                      labelText: "Número de Meses",
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30.0),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  TextFormField(
+                    controller: _yearsController,
+                    keyboardType: TextInputType.number,
+                    decoration: InputDecoration(
+                      labelText: "Número de Años",
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30.0),
+                      ),
+                    ),
+                  ),
+                ],
+                const SizedBox(height: 24),
+                Container(
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFFEF7FF),
+                    borderRadius: BorderRadius.circular(30),
+                    border: Border.all(
+                      color: Colors.grey,
+                      width: 1,
+                    ),
+                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  child: DropdownButtonHideUnderline(
+                    child: DropdownButton<String>(
+                      isExpanded: true,
+                      value: _selectedOption,
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          _selectedOption = newValue!;
+                        });
+                      },
+                      items: <String>[
+                        'Monto futuro',
+                        'Monto inicial',
+                        'Interés',
+                        'Principal prestamo',
+                        'Capital'
+                      ].map<DropdownMenuItem<String>>((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(value),
+                        );
+                      }).toList(),
+                    ),
                   ),
                 ),
-              ),
-              const SizedBox(height: 24),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: _calculate,
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.all(20),
-                    backgroundColor: const Color(0xFF232323),
-                    foregroundColor: const Color(0xFFFEF7FF),
-                  ),
-                  child: const Text("Calcular"),
-                ),
-              ),
-              const SizedBox(height: 20),
-              if (_result != null)
+                const SizedBox(height: 24),
                 SizedBox(
                   width: double.infinity,
-                  child: Align(
-                    alignment: Alignment.center,
-                    child: Container(
-                      padding: const EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF232323),
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.max,
-                        children: [
-                          const Icon(
-                            Icons.monetization_on,
-                            color: Colors.white,
-                            size: 26,
-                          ),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: Center(
-                              child: Text(
-                                "$_selectedOption: ${_calculator.formatNumber(_result!)}",
-                                style: const TextStyle(
-                                  fontSize: 18,
-                                  color: Colors.white,
+                  child: ElevatedButton(
+                    onPressed: _calculate,
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.all(20),
+                      backgroundColor: const Color(0xFF232323),
+                      foregroundColor: const Color(0xFFFEF7FF),
+                    ),
+                    child: const Text("Calcular"),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                if (_result != null)
+                  SizedBox(
+                    width: double.infinity,
+                    child: Align(
+                      alignment: Alignment.center,
+                      child: Container(
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF232323),
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.max,
+                          children: [
+                            const Icon(
+                              Icons.monetization_on,
+                              color: Colors.white,
+                              size: 26,
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Center(
+                                child: Text(
+                                  "$_selectedOption: ${_calculator.formatNumber(_result!)}",
+                                  style: const TextStyle(
+                                    fontSize: 18,
+                                    color: Colors.white,
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
                   ),
-                ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
