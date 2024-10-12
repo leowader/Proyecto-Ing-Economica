@@ -2,41 +2,47 @@ import 'package:flutter/material.dart';
 import 'package:ingeconomica/screens/amortizacion/americana/services/calcular_americana.dart'; // Asegúrate de importar la clase
 
 class AmericaView extends StatefulWidget {
+  const AmericaView({Key? key}) : super(key: key);
+
   @override
   _AmericaViewState createState() => _AmericaViewState();
 }
 
 class _AmericaViewState extends State<AmericaView> {
-  final TextEditingController principalController = TextEditingController();
-  final TextEditingController tasaInteresController = TextEditingController();
-  final TextEditingController aniosController = TextEditingController(); // Cambiado de años a anios
+  final _formKey = GlobalKey<FormState>();
 
-  String resultado = '';
+  // Controladores para obtener los datos ingresados por el usuario
+  final TextEditingController _principalController = TextEditingController();
+  final TextEditingController _tasaController = TextEditingController();
+  final TextEditingController _aniosController = TextEditingController();
 
-  void calcular() {
-    double principal = double.tryParse(principalController.text) ?? 0;
-    double tasaInteres = double.tryParse(tasaInteresController.text) ?? 0;
-    int anios = int.tryParse(aniosController.text) ?? 0; // Cambiado de años a anios
+  // Variables para almacenar los resultados
+  double? _interesMensual;
+  double? _totalIntereses;
+  double? _ultimoPago;
 
-    if (principal > 0 && tasaInteres > 0 && anios > 0) {
+  // Función para realizar el cálculo
+  void _calcularAmortizacion() {
+    if (_formKey.currentState!.validate()) {
+      // Obtener los valores ingresados por el usuario
+      double principal = double.parse(_principalController.text);
+      double tasaInteresAnual = double.parse(_tasaController.text);
+      int anios = int.parse(_aniosController.text);
+
+      // Crear una instancia de la clase CalcularAmericana
       CalcularAmericana calculadora = CalcularAmericana(
         principal: principal,
-        tasaInteresAnual: tasaInteres,
-        anios: anios, // Cambiado de años a anios
+        tasaInteresAnual: tasaInteresAnual,
+        anios: anios,
       );
 
-      Map<String, dynamic> resultadoCalculo = calculadora.calcularAmortizacion();
+      // Realizar el cálculo y obtener los resultados
+      var resultado = calculadora.calcularAmortizacion();
 
       setState(() {
-        resultado = '''
-        Pago mensual de intereses: ${resultadoCalculo['pagoInteresMensual'].toStringAsFixed(2)}
-        Total de intereses pagados: ${resultadoCalculo['totalIntereses'].toStringAsFixed(2)}
-        Total a pagar al final: ${resultadoCalculo['totalPago'].toStringAsFixed(2)}
-        ''';
-      });
-    } else {
-      setState(() {
-        resultado = 'Por favor, ingrese valores válidos.';
+        _interesMensual = resultado['interesMensual'];
+        _totalIntereses = resultado['totalIntereses'];
+        _ultimoPago = resultado['ultimoPago'];
       });
     }
   }
@@ -44,38 +50,63 @@ class _AmericaViewState extends State<AmericaView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Amortización Americana')),
+      appBar: AppBar(
+        title: const Text('Cálculo de Amortización Americana'),
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            TextField(
-              controller: principalController,
-              keyboardType: TextInputType.number,
-              decoration: InputDecoration(labelText: 'Monto del préstamo (capital)'),
-            ),
-            TextField(
-              controller: tasaInteresController,
-              keyboardType: TextInputType.number,
-              decoration: InputDecoration(labelText: 'Tasa de interés anual (%)'),
-            ),
-            TextField(
-              controller: aniosController, // Cambiado de años a anios
-              keyboardType: TextInputType.number,
-              decoration: InputDecoration(labelText: 'Duración del préstamo en años'),
-            ),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: calcular,
-              child: Text('Calcular'),
-            ),
-            SizedBox(height: 20),
-            Text(
-              resultado,
-              style: TextStyle(fontSize: 16),
-              textAlign: TextAlign.center,
-            ),
-          ],
+        child: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              TextFormField(
+                controller: _principalController,
+                keyboardType: TextInputType.number,
+                decoration: const InputDecoration(labelText: 'Monto del préstamo (Capital)'),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Por favor ingresa el monto del préstamo';
+                  }
+                  return null;
+                },
+              ),
+              TextFormField(
+                controller: _tasaController,
+                keyboardType: TextInputType.number,
+                decoration: const InputDecoration(labelText: 'Tasa de interés anual (%)'),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Por favor ingresa la tasa de interés';
+                  }
+                  return null;
+                },
+              ),
+              TextFormField(
+                controller: _aniosController,
+                keyboardType: TextInputType.number,
+                decoration: const InputDecoration(labelText: 'Duración del préstamo (años)'),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Por favor ingresa la duración del préstamo';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: _calcularAmortizacion,
+                child: const Text('Calcular'),
+              ),
+              const SizedBox(height: 20),
+              if (_interesMensual != null) ...[
+                Text('Interés mensual: ${_interesMensual!.toStringAsFixed(2)}'),
+                Text('Total de intereses pagados: ${_totalIntereses!.toStringAsFixed(2)}'),
+                Text('Último pago (capital + interés): ${_ultimoPago!.toStringAsFixed(2)}'),
+                const SizedBox(height: 20),
+              ],
+            ],
+          ),
         ),
       ),
     );
