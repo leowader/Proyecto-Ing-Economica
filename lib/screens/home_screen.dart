@@ -77,10 +77,10 @@ class _HomeScreenState extends State<HomeScreen> {
                     "/geometric/value"), // Icono de funciones matemáticas
                 buildGridItem(context, "G. Aritmético", Icons.bar_chart,
                     "/aritmetico"), // Icono de gráfico de barras
-                buildGridItem(context, "Préstamos", Icons.monetization_on,
-                    "/option5"), // Icono de moneda
-                buildGridItem(context, "Gestión de Pagos", Icons.payment,
-                    "/option6"), // Icono de pago
+                buildGridItem(context, "Unidad Valor Real", Icons.monetization_on,
+                    "/unidadvalorreal"), // Icono de moneda
+                buildGridItem(context, "E.A.I", Icons.payment,
+                    "/evaluacionai"), // Icono de pago
               ],
             ),
           ),
