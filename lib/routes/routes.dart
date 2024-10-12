@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:ingeconomica/screens/alternativa_inversion/views/eai_pri.dart';
+import 'package:ingeconomica/screens/alternativa_inversion/views/eai_vpn.dart';
+import 'package:ingeconomica/screens/alternativa_inversion/views/evaluacion_alternativa_inversion_views.dart';
 import 'package:ingeconomica/screens/amortizacion/view/alemana_view.dart';
 import 'package:ingeconomica/screens/amortizacion/view/americana_view.dart';
 import 'package:ingeconomica/screens/amortizacion/view/amortizacion_view.dart';
@@ -23,6 +26,9 @@ import 'package:ingeconomica/screens/simple/view/simple_tiempo.dart';
 import 'package:ingeconomica/screens/simple/view/simple_view.dart';
 import 'package:ingeconomica/screens/gradiente_geometrico/view/geometric_value_calculator.dart';
 import 'package:ingeconomica/screens/gradiente_geometrico/view/geometric_series_calculator.dart';
+import 'package:ingeconomica/screens/unidad_valor_real/views/unidad_valor_real_views.dart';
+import 'package:ingeconomica/screens/unidad_valor_real/views/uvr_form.dart';
+import 'package:ingeconomica/screens/unidad_valor_real/views/uvr_table.dart';
 import 'package:ingeconomica/screens/tir/view/tir_form.dart';
 
 var routes = <String, WidgetBuilder>{
@@ -55,4 +61,11 @@ var routes = <String, WidgetBuilder>{
   "/aritmetico/cuotaespecifica": (_) => const CuotaEspecifica(),
   "/geometric/value": (_) => const GeometricValueCalculator(),
   "/geometric/series": (_) => const GeometricSeriesCalculator(),
+  
+  "/unidadvalorreal": (_) => const UnidadValorRealView(),
+  "/unidadvalorreal/valor": (_) => const UnidadValorReal(),
+  "/unidadvalorreal/tabla": (_) => const UnidadValorRealTabla(),
+  "/evaluacionai": (_) => const EvaluacionAlternativaInversionView(),
+  "/evaluacionai/vpn_ir": (_) => const EvaluacionAlternativaInversionVPN(),
+  "/evaluacionai/pri": (_) => const EvaluacionAlternativaInversionPRIAR(),
 };
