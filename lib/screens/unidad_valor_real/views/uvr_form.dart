@@ -70,7 +70,7 @@ class UnidadValorRealState extends State<UnidadValorReal> {
               const SizedBox(height: 20),
               buildTextField(_valorAController, 'Unidad de Valor Real Anterior'),
               const SizedBox(height: 24),
-              buildTextField(_variationController, 'Variacion (%)'),
+              buildTextField(_variationController, 'Variacion del IPC(%)'),
               const SizedBox(height: 24),
               TextFormField(
                   controller: _startDateController,
@@ -98,7 +98,7 @@ class UnidadValorRealState extends State<UnidadValorReal> {
                   controller: _endDateController,
                   readOnly: true,
                   decoration: InputDecoration(
-                    labelText: "Fecha de Finalización",
+                    labelText: "Fecha de Calculo",
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(30.0),
                     ),

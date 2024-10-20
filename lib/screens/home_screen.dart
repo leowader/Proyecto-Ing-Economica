@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:ingeconomica/screens/alternativa_inversion/views/evaluacion_alternativa_inversion_views.dart';
 import 'package:ingeconomica/screens/prestamos/prestamos.dart';
+import 'package:ingeconomica/screens/unidad_valor_real/views/unidad_valor_real_views.dart';
+import 'package:ingeconomica/screens/unidad_valor_real/views/uvr_form.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:ingeconomica/screens/amortizacion/view/amortizacion_view.dart';
 import 'package:ingeconomica/screens/aritmetico/views/aritmetico_views.dart';
@@ -106,6 +109,8 @@ class _HomeScreenState extends State<HomeScreen> {
       const Bonos(),
       const Inflacion(),
       TIRView(),
+      const UnidadValorRealView(),
+      const EvaluacionAlternativaInversionView(),
     ];
 
     return WillPopScope(
@@ -180,6 +185,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 buildGridItem(context, "Bonos", Icons.attach_money, 6),
                 buildGridItem(context, "Inflación", Icons.trending_down, 7),
                 buildGridItem(context, "TIR", Icons.trending_up, 8),
+                buildGridItem(context, "U.V.R", Icons.monetization_on_outlined, 9),
+                buildGridItem(context, "E.A.I", Icons.account_balance_outlined, 8),
               ],
             ),
           ),
