@@ -33,7 +33,7 @@ import 'package:ingeconomica/screens/tir/view/tir_form.dart';
 
 var routes = <String, WidgetBuilder>{
   "/": (_) => const HomeScreen(
-        username: "Tester",
+        username: "",
         initialAmount: 2000000,
       ),
   "/bonos": (_) => const Bonos(),

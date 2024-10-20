@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:ingeconomica/screens/RetirosScreen.dart';
+import 'package:ingeconomica/screens/prestamos/prestamos.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:ingeconomica/screens/amortizacion/view/amortizacion_view.dart';
 import 'package:ingeconomica/screens/aritmetico/views/aritmetico_views.dart';
 import 'package:ingeconomica/screens/bonos/views/bonos.dart';
@@ -10,13 +11,15 @@ import 'package:ingeconomica/screens/simple/services/interes_calculator.dart';
 import 'package:ingeconomica/screens/simple/view/simple_view.dart';
 import 'package:ingeconomica/screens/tir/view/tir_form.dart';
 
-
 class HomeScreen extends StatefulWidget {
   final String username;
   final double initialAmount;
 
-  const HomeScreen(
-      {super.key, required this.username, required this.initialAmount});
+  const HomeScreen({
+    super.key,
+    required this.username,
+    required this.initialAmount,
+  });
 
   @override
   _HomeScreenState createState() => _HomeScreenState();
@@ -24,17 +27,65 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
-  int _selectedOptionIndex = 0; // Índice para las opciones de la lista
+  int _selectedOptionIndex = 0; // Index for the option list
+  double currentAmount = 0;
+  List<String> transactions = [];
+
+  @override
+  void initState() {
+    super.initState();
+    loadAmount();
+    loadTransactions();
+  }
+
+  Future<void> loadAmount() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      currentAmount = prefs.getDouble('amount') ?? widget.initialAmount;
+    });
+  }
+
+  Future<void> saveAmount() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setDouble('amount', currentAmount);
+  }
+
+  Future<void> loadTransactions() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      transactions = prefs.getStringList('transactions') ?? [];
+    });
+  }
+
+  Future<void> saveTransaction(String transaction) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    transactions.add(transaction);
+    await prefs.setStringList('transactions', transactions);
+  }
+
+  void makeLoan(double amount) {
+    setState(() {
+      currentAmount += amount;
+      saveAmount();
+      saveTransaction('Préstamo de \$${amount.toStringAsFixed(2)}');
+    });
+  }
+
+  void makePayment(double amount) {
+    setState(() {
+      currentAmount -= amount;
+      saveAmount();
+      saveTransaction('Pago de \$${amount.toStringAsFixed(2)}');
+    });
+  }
 
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
-      _selectedOptionIndex =
-          0; // Resetear al menú principal al cambiar de sección
+      _selectedOptionIndex = 0; // Reset to main menu when changing sections
     });
   }
 
-  // Ahora manejamos la navegación internamente, cambiando el índice de las opciones
   void _onOptionTapped(int index) {
     setState(() {
       _selectedOptionIndex = index;
@@ -45,7 +96,6 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     final InterestCalculator calculator = InterestCalculator();
 
-    // Incluimos todas las opciones dentro de listOptions
     List<Widget> listOptions = [
       buildMainMenu(context, calculator),
       const SimpleView(),
@@ -53,138 +103,245 @@ class _HomeScreenState extends State<HomeScreen> {
       const GeometricOptionsForm(),
       const AritmeticoView(),
       const AmortizacionView(),
-      const Bonos(), // Bonos ahora se maneja dentro del stack
-      const Inflacion(), // Inflación ahora se maneja dentro del stack
+      const Bonos(),
+      const Inflacion(),
       TIRView(),
     ];
 
-    return Scaffold(
-      body: IndexedStack(
-        index: _selectedIndex,
-        children: [
-          IndexedStack(
-            index: _selectedOptionIndex,
-            children: listOptions,
-          ),
-          buildMovimientosScreen(),
-          buildServiciosScreen(),
-        ],
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Inicio',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.receipt),
-            label: 'Movimientos',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.grid_view),
-            label: 'Servicios',
-          ),
-        ],
-        currentIndex: _selectedIndex,
-        selectedItemColor: const Color(0xFFD6D6D6),
-        unselectedItemColor: const Color.fromARGB(255, 255, 255, 255),
-        backgroundColor: const Color(0xFF232323),
-        onTap: _onItemTapped,
-        type: BottomNavigationBarType.fixed,
+    return WillPopScope(
+      onWillPop: () async {
+        if (_selectedOptionIndex != 0) {
+          setState(() {
+            _selectedOptionIndex = 0; // Go back to main menu
+          });
+          return false; // Don't leave the current screen
+        }
+        return true; // Allow the system to handle the back button
+      },
+      child: Scaffold(
+        body: IndexedStack(
+          index: _selectedIndex,
+          children: [
+            IndexedStack(
+              index: _selectedOptionIndex,
+              children: listOptions,
+            ),
+            buildMovimientosScreen(),
+            buildServiciosScreen(),
+          ],
+        ),
+        bottomNavigationBar: BottomNavigationBar(
+          items: const <BottomNavigationBarItem>[
+            BottomNavigationBarItem(
+              icon: Icon(Icons.home),
+              label: 'Inicio',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.receipt),
+              label: 'Movimientos',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.grid_view),
+              label: 'Servicios',
+            ),
+          ],
+          currentIndex: _selectedIndex,
+          selectedItemColor: const Color(0xFFD6D6D6),
+          unselectedItemColor: const Color(0xFFFFFFFF),
+          backgroundColor: const Color(0xFF232323),
+          onTap: _onItemTapped,
+          type: BottomNavigationBarType.fixed,
+        ),
       ),
     );
   }
 
-  // Widget para la pantalla del menú principal
   Widget buildMainMenu(BuildContext context, InterestCalculator calculator) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        const Padding(
-          padding: EdgeInsets.all(16.0),
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Text(
+            'Bienvenido ${widget.username}',
+            style: const TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+              color: Color(0xFF232323),
+            ),
+          ),
+          const SizedBox(height: 10),
+          buildBalanceCard(calculator),
+          const SizedBox(height: 20),
+          Expanded(
+            child: GridView.count(
+              crossAxisCount: 3,
+              mainAxisSpacing: 20,
+              crossAxisSpacing: 20,
+              padding: const EdgeInsets.all(20.0),
+              children: [
+                buildGridItem(context, "Interés Simple", Icons.money, 1),
+                buildGridItem(context, "Interés Compuesto", Icons.trending_up, 2),
+                buildGridItem(context, "G. Geométrico", Icons.pie_chart, 3),
+                buildGridItem(context, "G. Aritmético", Icons.calculate, 4),
+                buildGridItem(context, "Amortización", Icons.history, 5),
+                buildGridItem(context, "Bonos", Icons.attach_money, 6),
+                buildGridItem(context, "Inflación", Icons.trending_down, 7),
+                buildGridItem(context, "TIR", Icons.trending_up, 8),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget buildBalanceCard(InterestCalculator calculator) {
+    return Card(
+      elevation: 4,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Container(
+        decoration: BoxDecoration(
+          gradient: const LinearGradient(
+            colors: [Colors.blueAccent, Colors.lightBlueAccent],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          borderRadius: BorderRadius.circular(12),
         ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20.0),
-          child: Column(
-            children: [
-              Text(
-                'Bienvenido, ${widget.username}',
-                style: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFF232323),
+        padding: const EdgeInsets.all(16.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const Icon(Icons.account_balance_wallet, size: 40, color: Colors.white),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Text(
+                  '\$${calculator.formatNumber(currentAmount)}',
+                  style: const TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 10),
-              Text(
-                'Total: \$${calculator.formatNumber(widget.initialAmount)}',
-                style: const TextStyle(fontSize: 18, color: Color(0xFF232323)),
-              ),
-            ],
-          ),
+              ],
+            ),
+          ],
         ),
-        const SizedBox(height: 20),
-        Expanded(
-          child: GridView.count(
-            crossAxisCount: 3,
-            mainAxisSpacing: 20,
-            crossAxisSpacing: 20,
-            padding: const EdgeInsets.all(20.0),
-            children: [
-              buildGridItem(context, "Interés Simple", Icons.attach_money, 1),
-              buildGridItem(context, "Interés Compuesto", Icons.trending_up, 2),
-              buildGridItem(context, "G. Geométrico", Icons.functions, 3),
-              buildGridItem(context, "G. Aritmético", Icons.bar_chart, 4),
-              buildGridItem(context, "Amortizacion", Icons.bar_chart, 5),
-              buildGridItem(context, "Bonos", Icons.monetization_on, 6),
-              buildGridItem(context, "Inflacion", Icons.monetization_on, 7),
-              buildGridItem(context, "Tir", Icons.monetization_on, 8),
-            ],
-          ),
-        ),
-      ],
+      ),
     );
   }
 
   Widget buildMovimientosScreen() {
-    return const Center(
-      child: Text(
-        'Pantalla de Movimientos',
-        style: TextStyle(fontSize: 20),
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Historial de Movimientos',
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 16),
+          Expanded(
+            child: ListView.builder(
+              itemCount: transactions.length,
+              itemBuilder: (context, index) {
+                String transaction = transactions[index];
+                String transactionType = transaction.split(' ')[0]; // Get type (Loan or Payment)
+                double amount = double.parse(transaction.split('\$')[1]); // Get amount
+                
+                // Define colors based on transaction type
+                Color tileColor = transactionType == 'Préstamo' ? Colors.green[100]! : Colors.red[100]!;
+                Color textColor = transactionType == 'Préstamo' ? Colors.green : Colors.red;
+
+                // Format amount to show no decimals
+                String formattedAmount = amount.toStringAsFixed(0);
+
+                return Card(
+                  elevation: 4,
+                  margin: const EdgeInsets.symmetric(vertical: 8),
+                  child: ListTile(
+                    title: RichText(
+                      text: TextSpan(
+                        children: [
+                          TextSpan(
+                            text: '$transactionType de \$',
+                            style: const TextStyle(fontSize: 16, color: Colors.black),
+                          ),
+                          TextSpan(
+                            text: formattedAmount,
+                            style: TextStyle(fontSize: 16, color: textColor),
+                          ),
+                        ],
+                      ),
+                    ),
+                    leading: const Icon(Icons.receipt),
+                    tileColor: tileColor, // Apply color based on type
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
       ),
     );
   }
 
   Widget buildServiciosScreen() {
-  return Column(
-    mainAxisAlignment: MainAxisAlignment.center,
-    children: [
-      ElevatedButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const RetirosScreen()),
-          );
-        },
-        child: const Text('Retiros'),
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          const Text(
+            'Servicios Disponibles',
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 16),
+          buildServiceCard('Hacer Préstamo', Icons.monetization_on, () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => LoanWidget(
+                  onLoanMade: (double loanAmount) {
+                    makeLoan(loanAmount); // Logic to apply the loan
+                  },
+                ),
+              ),
+            );
+          }),
+          buildServiceCard('Hacer Pago', Icons.payment, () {
+            makePayment(50); // Example payment of 50
+          }),
+        ],
       ),
-      ElevatedButton(
-        onPressed: () {
-          // Aquí podrías implementar la lógica de préstamos en el futuro
-        },
-        child: const Text('Préstamos'),
+    );
+  }
+
+  Widget buildServiceCard(String title, IconData icon, VoidCallback onTap) {
+    return Card(
+      elevation: 4,
+      margin: const EdgeInsets.symmetric(vertical: 8),
+      child: ListTile(
+        title: Text(
+          title,
+          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        ),
+        leading: Icon(icon),
+        trailing: const Icon(Icons.arrow_forward),
+        onTap: onTap,
       ),
-    ],
-  );
-}
+    );
+  }
 
-  
-
-  Widget buildGridItem(
-      BuildContext context, String title, IconData icon, int optionIndex) {
+  Widget buildGridItem(BuildContext context, String title, IconData icon, int optionIndex) {
     return GestureDetector(
       onTap: () {
-        _onOptionTapped(optionIndex); // Cambiar la opción seleccionada
+        _onOptionTapped(optionIndex); // Change selected option
       },
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
