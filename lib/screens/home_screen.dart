@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:ingeconomica/screens/Movimientos/pagos/historialPagos.dart';
+import 'package:ingeconomica/screens/Movimientos/prestamos/listaPrestamos.dart';
+import 'package:ingeconomica/screens/Servicios/PagoCuotas/pagos.dart';
+import 'package:ingeconomica/screens/Servicios/Prestamos/solicitudPrestamo.dart';
 import 'package:ingeconomica/screens/amortizacion/view/amortizacion_view.dart';
 import 'package:ingeconomica/screens/aritmetico/views/aritmetico_views.dart';
 import 'package:ingeconomica/screens/bonos/views/bonos.dart';
@@ -8,7 +12,6 @@ import 'package:ingeconomica/screens/inflacion/view/inflacion.dart';
 import 'package:ingeconomica/screens/simple/services/interes_calculator.dart';
 import 'package:ingeconomica/screens/simple/view/simple_view.dart';
 import 'package:ingeconomica/screens/tir/view/tir_form.dart';
-
 
 class HomeScreen extends StatefulWidget {
   final String username;
@@ -55,6 +58,11 @@ class _HomeScreenState extends State<HomeScreen> {
       const Bonos(), // Bonos ahora se maneja dentro del stack
       const Inflacion(), // Inflación ahora se maneja dentro del stack
       TIRView(),
+      buildServiciosScreen(context, calculator),
+      solicitudPrestamo(),
+      ListaPrestamos(),
+      Pagos(),
+      const HistorialPagos(),
     ];
 
     return Scaffold(
@@ -65,8 +73,8 @@ class _HomeScreenState extends State<HomeScreen> {
             index: _selectedOptionIndex,
             children: listOptions,
           ),
-          buildMovimientosScreen(),
-          buildServiciosScreen(),
+          buildMovimientosScreen(context, calculator),
+          buildServiciosScreen(context, calculator),
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
@@ -145,21 +153,95 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget buildMovimientosScreen() {
-    return const Center(
-      child: Text(
-        'Pantalla de Movimientos',
-        style: TextStyle(fontSize: 20),
-      ),
+  Widget buildMovimientosScreen(
+      BuildContext contexto, InterestCalculator calculator) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        const Padding(
+          padding: EdgeInsets.all(16.0),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20.0),
+          child: Column(
+            children: [
+              Text(
+                'Bienvenido, ${widget.username}',
+                style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF232323),
+                ),
+              ),
+              const SizedBox(height: 10),
+              Text(
+                'Total: \$${calculator.formatNumber(widget.initialAmount)}',
+                style: const TextStyle(fontSize: 18, color: Color(0xFF232323)),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 20),
+        Expanded(
+          child: GridView.count(
+            crossAxisCount: 3,
+            mainAxisSpacing: 20,
+            crossAxisSpacing: 20,
+            padding: const EdgeInsets.all(20.0),
+            children: [
+              buildGridItem(
+                  contexto, "Mis prestamos", Icons.list_alt_outlined, 11),
+              buildGridItem(contexto, "Historial pagos", Icons.history, 11),
+            ],
+          ),
+        ),
+      ],
     );
   }
 
-  Widget buildServiciosScreen() {
-    return const Center(
-      child: Text(
-        'Pantalla de Servicios',
-        style: TextStyle(fontSize: 20),
-      ),
+  Widget buildServiciosScreen(
+      BuildContext contexto, InterestCalculator calculator) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        const Padding(
+          padding: EdgeInsets.all(16.0),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20.0),
+          child: Column(
+            children: [
+              Text(
+                'Bienvenido, ${widget.username}',
+                style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF232323),
+                ),
+              ),
+              const SizedBox(height: 10),
+              Text(
+                'Total: \$${calculator.formatNumber(widget.initialAmount)}',
+                style: const TextStyle(fontSize: 18, color: Color(0xFF232323)),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 20),
+        Expanded(
+          child: GridView.count(
+            crossAxisCount: 3,
+            mainAxisSpacing: 20,
+            crossAxisSpacing: 20,
+            padding: const EdgeInsets.all(20.0),
+            children: [
+              buildGridItem(
+                  contexto, "Solicitar prestamo", Icons.request_page, 10),
+              buildGridItem(contexto, "Pagar", Icons.payments, 12),
+            ],
+          ),
+        ),
+      ],
     );
   }
 

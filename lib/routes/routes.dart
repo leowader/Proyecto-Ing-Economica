@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:ingeconomica/screens/Movimientos/pagos/historialPagos.dart';
+import 'package:ingeconomica/screens/Movimientos/prestamos/listaPrestamos.dart';
+import 'package:ingeconomica/screens/Servicios/PagoCuotas/pagos.dart';
+import 'package:ingeconomica/screens/Servicios/Prestamos/solicitudPrestamo.dart';
 import 'package:ingeconomica/screens/alternativa_inversion/views/eai_pri.dart';
 import 'package:ingeconomica/screens/alternativa_inversion/views/eai_vpn.dart';
 import 'package:ingeconomica/screens/alternativa_inversion/views/evaluacion_alternativa_inversion_views.dart';
@@ -50,10 +54,9 @@ var routes = <String, WidgetBuilder>{
   "/amortizacion": (_) => const AmortizacionView(),
   "/amortizacion/francesa": (_) => const Francesa(),
   "/amortizacion/alemana": (_) => const AlemanaView(),
-  "/amortizacion/americana": (_) =>  AmericaView(),
+  "/amortizacion/americana": (_) => AmericaView(),
   "/inflacion": (_) => const Inflacion(),
-  "/tir": (_)=>  TIRView(),
-
+  "/tir": (_) => TIRView(),
   "/aritmetico": (_) => const AritmeticoView(),
   "/aritmetico/valorpresente": (_) => const ValorPresente(),
   "/aritmetico/valorfuturo": (_) => const ValorFuturo(),
@@ -61,11 +64,14 @@ var routes = <String, WidgetBuilder>{
   "/aritmetico/cuotaespecifica": (_) => const CuotaEspecifica(),
   "/geometric/value": (_) => const GeometricValueCalculator(),
   "/geometric/series": (_) => const GeometricSeriesCalculator(),
-  
   "/unidadvalorreal": (_) => const UnidadValorRealView(),
   "/unidadvalorreal/valor": (_) => const UnidadValorReal(),
   "/unidadvalorreal/tabla": (_) => const UnidadValorRealTabla(),
   "/evaluacionai": (_) => const EvaluacionAlternativaInversionView(),
   "/evaluacionai/vpn_ir": (_) => const EvaluacionAlternativaInversionVPN(),
   "/evaluacionai/pri": (_) => const EvaluacionAlternativaInversionPRIAR(),
+  "/prestamos": (_) => solicitudPrestamo(),
+  "/movimientos/prestamos": (_) => ListaPrestamos(),
+  "/pagos": (_) => Pagos(),
+  "/pagos/historial": (_) => const HistorialPagos(),
 };
