@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ingeconomica/screens/RetirosScreen.dart';
 import 'package:ingeconomica/screens/amortizacion/view/amortizacion_view.dart';
 import 'package:ingeconomica/screens/aritmetico/views/aritmetico_views.dart';
 import 'package:ingeconomica/screens/bonos/views/bonos.dart';
@@ -155,13 +156,29 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget buildServiciosScreen() {
-    return const Center(
-      child: Text(
-        'Pantalla de Servicios',
-        style: TextStyle(fontSize: 20),
+  return Column(
+    mainAxisAlignment: MainAxisAlignment.center,
+    children: [
+      ElevatedButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const RetirosScreen()),
+          );
+        },
+        child: const Text('Retiros'),
       ),
-    );
-  }
+      ElevatedButton(
+        onPressed: () {
+          // Aquí podrías implementar la lógica de préstamos en el futuro
+        },
+        child: const Text('Préstamos'),
+      ),
+    ],
+  );
+}
+
+  
 
   Widget buildGridItem(
       BuildContext context, String title, IconData icon, int optionIndex) {
