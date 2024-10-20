@@ -73,7 +73,7 @@ class _TIRViewState extends State<TIRView> {
               TextFormField(
                 controller: _flujosController,
                 keyboardType: TextInputType.text,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                     labelText: 'Flujos de caja (separados por comas, ej: 3000,4000)'),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -98,16 +98,16 @@ class _TIRViewState extends State<TIRView> {
                   });
                 },
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: _calcularTIR,
                 child: Text('Calcular TIR'),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               if (_resultadoTIR != null)
                 Text(
                   'Resultado TIR: ${_resultadoTIR!.toStringAsFixed(2)}%',
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                     color: Colors.green,

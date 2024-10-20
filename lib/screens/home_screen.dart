@@ -162,14 +162,6 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          Text(
-            'Bienvenido ${widget.username}',
-            style: const TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-              color: Color(0xFF232323),
-            ),
-          ),
           const SizedBox(height: 10),
           buildBalanceCard(calculator),
           const SizedBox(height: 20),
@@ -237,7 +229,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget buildMovimientosScreen() {
     return Padding(
-      padding: const EdgeInsets.all(16.0),
+      padding: const EdgeInsets.all(30.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -289,13 +281,13 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
       ),
     );
-  }
-
-  Widget buildServiciosScreen() {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
+  }Widget buildServiciosScreen() {
+  return Padding(
+    padding: const EdgeInsets.all(16.0),
+    child: Center( // Center the Column vertically and horizontally
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.center, // Center items vertically
+        crossAxisAlignment: CrossAxisAlignment.center, // Center items horizontally
         children: [
           const Text(
             'Servicios Disponibles',
@@ -314,13 +306,16 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             );
           }),
+          const SizedBox(height: 16), // Add spacing between services
           buildServiceCard('Hacer Pago', Icons.payment, () {
             makePayment(50); // Example payment of 50
           }),
         ],
       ),
-    );
-  }
+    ),
+  );
+}
+
 
   Widget buildServiceCard(String title, IconData icon, VoidCallback onTap) {
     return Card(

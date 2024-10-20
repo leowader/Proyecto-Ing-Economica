@@ -114,7 +114,7 @@ class _BonosState extends State<Bonos> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
+  appBar: AppBar(title: const Text('Calculo bonos')),
       body: SingleChildScrollView( 
         padding: const EdgeInsets.all(16.0),
         child: Column(
