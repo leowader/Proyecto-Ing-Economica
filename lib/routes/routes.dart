@@ -69,5 +69,4 @@ var routes = <String, WidgetBuilder>{
   "/evaluacionai": (_) => const EvaluacionAlternativaInversionView(),
   "/evaluacionai/vpn_ir": (_) => const EvaluacionAlternativaInversionVPN(),
   "/evaluacionai/pri": (_) => const EvaluacionAlternativaInversionPRIAR(),
-  "/pagos": (_) => Pagos(),
 };

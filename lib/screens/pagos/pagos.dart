@@ -1,34 +1,36 @@
 import 'package:flutter/material.dart';
 
 class Pagos extends StatefulWidget {
+  final double saldoDisponible;
+  final Function(double pago, String descripcion) onPagoRealizado;
+
+  const Pagos({super.key, required this.saldoDisponible, required this.onPagoRealizado});
+
   @override
   _PagosState createState() => _PagosState();
 }
 
 class _PagosState extends State<Pagos> {
   final _formKey = GlobalKey<FormState>();
-  double saldo =
-      2000000; // Saldo inicial local (puede venir de una base de datos)
-  double cuota = 0.0; // Monto de la cuota a pagar ingresado por el usuario
+  double cuota = 0.0;
+  String descripcion = '';
 
-  // Función para procesar el pago de la cuota
   void _pagarCuota() {
     if (_formKey.currentState!.validate()) {
-      _formKey.currentState!.save(); // Guarda el valor ingresado por el usuario
+      _formKey.currentState!.save();
 
-      if (cuota <= saldo) {
-        // Si el saldo es suficiente, restar el valor de la cuota
-        setState(() {
-          saldo -= cuota;
-        });
+      if (cuota <= widget.saldoDisponible) {
+        // Realiza el pago y notifica a la HomeScreen
+        widget.onPagoRealizado(cuota, descripcion);
 
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text(
-              'Pago exitoso. Saldo restante: \$${saldo.toStringAsFixed(2)}'),
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text('Pago exitoso.'),
         ));
+
+        // Regresar a la HomeScreen
+        Navigator.pop(context);
       } else {
-        // Si el saldo es insuficiente, mostrar un mensaje de error
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
           content: Text('Saldo insuficiente para pagar la cuota.'),
         ));
       }
@@ -38,9 +40,7 @@ class _PagosState extends State<Pagos> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Pagar Cuota'),
-      ),
+      appBar: AppBar(title: Text('Pagar Cuota')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
@@ -48,13 +48,10 @@ class _PagosState extends State<Pagos> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // Muestra el saldo disponible localmente
               Text(
-                'Saldo disponible: \$${saldo.toStringAsFixed(2)}',
-                style: TextStyle(fontSize: 24),
-              ),
+                  'Saldo disponible: \$${widget.saldoDisponible.toStringAsFixed(2)}',
+                  style: TextStyle(fontSize: 24)),
               SizedBox(height: 20),
-              // Campo para ingresar el monto de la cuota
               TextFormField(
                 decoration: InputDecoration(labelText: 'Cuota a pagar'),
                 keyboardType: TextInputType.number,
@@ -72,7 +69,13 @@ class _PagosState extends State<Pagos> {
                 },
               ),
               SizedBox(height: 20),
-              // Botón para realizar el pago
+              TextFormField(
+                decoration: InputDecoration(labelText: 'Descripción del pago'),
+                onSaved: (value) {
+                  descripcion = value ?? '';
+                },
+              ),
+              SizedBox(height: 20),
               ElevatedButton(
                 onPressed: _pagarCuota,
                 style: ElevatedButton.styleFrom(

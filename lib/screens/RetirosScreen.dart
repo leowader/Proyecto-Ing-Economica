@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:local_auth/local_auth.dart'; // Para la autenticación biométrica
-import 'package:flutter_local_notifications/flutter_local_notifications.dart'; // Para las notificaciones
+import 'package:local_auth/local_auth.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 class RetirosScreen extends StatefulWidget {
-  const RetirosScreen({super.key});
+  final Function(double) onRetiroRealizado; // Callback for successful withdrawal
+
+  const RetirosScreen({super.key, required this.onRetiroRealizado});
 
   @override
   _RetirosScreenState createState() => _RetirosScreenState();
@@ -34,7 +36,6 @@ class _RetirosScreenState extends State<RetirosScreen> {
         AndroidNotificationDetails(
       'your_channel_id',
       'your_channel_name',
-      //'your_channel_description',
       importance: Importance.max,
       priority: Priority.high,
     );
@@ -55,11 +56,20 @@ class _RetirosScreenState extends State<RetirosScreen> {
     );
 
     if (isAuthenticated) {
-      final String cantidad = _montoController.text;
-      // Lógica para restar la cantidad de la cuenta actual del usuario
-      _mostrarNotificacion(cantidad);
+      final String cantidadStr = _montoController.text;
+      double cantidad = double.tryParse(cantidadStr) ?? 0;
+
+      if (cantidad > 0) {
+        widget.onRetiroRealizado(cantidad); // Call the function passed from HomeScreen
+        _mostrarNotificacion(cantidadStr);
+
+        Navigator.pop(context); // Close the RetirosScreen after successful transaction
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Ingresa una cantidad válida')),
+        );
+      }
     } else {
-      // Manejar caso de fallo en la autenticación
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Autenticación fallida')),
       );
@@ -77,17 +87,33 @@ class _RetirosScreenState extends State<RetirosScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            const Text(
+              'Confirma el monto a retirar:',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 20),
             TextField(
               controller: _montoController,
               keyboardType: TextInputType.number,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 labelText: 'Monto a retirar',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
               ),
             ),
             const SizedBox(height: 20),
-            ElevatedButton(
+            ElevatedButton.icon(
+              icon: const Icon(Icons.check),
               onPressed: _retirarDinero,
-              child: const Text('Confirmar retiro'),
+              label: const Text('Confirmar retiro'),
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 32.0, vertical: 16.0),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
             ),
           ],
         ),
