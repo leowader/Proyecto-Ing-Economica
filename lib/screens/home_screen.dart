@@ -4,7 +4,6 @@ import 'package:ingeconomica/screens/alternativa_inversion/views/evaluacion_alte
 import 'package:ingeconomica/screens/pagos/pagos.dart';
 import 'package:ingeconomica/screens/prestamos/prestamos.dart';
 import 'package:ingeconomica/screens/unidad_valor_real/views/unidad_valor_real_views.dart';
-import 'package:ingeconomica/screens/unidad_valor_real/views/uvr_form.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:ingeconomica/screens/amortizacion/view/amortizacion_view.dart';
 import 'package:ingeconomica/screens/aritmetico/views/aritmetico_views.dart';
@@ -255,35 +254,43 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget buildMovimientosScreen() {
-    return Padding(
-      padding: const EdgeInsets.all(30.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            'Historial de Movimientos',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 16),
-          Expanded(
-            child: ListView.builder(
-              itemCount: transactions.length,
-              itemBuilder: (context, index) {
-                String transaction = transactions[index];
-                String transactionType =
-                    transaction.split(' ')[0]; // Get type (Loan or Payment)
-                double amount =
-                    double.parse(transaction.split('\$')[1]); // Get amount
+Widget buildMovimientosScreen() {
+  return Padding(
+    padding: const EdgeInsets.all(30.0),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'Historial de Movimientos',
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 16),
+        Expanded(
+          child: ListView.builder(
+            itemCount: transactions.length,
+            itemBuilder: (context, index) {
+              String transaction = transactions[index];
 
-                // Define colors based on transaction type
+              // Usar la expresión regular para encontrar el número
+              RegExp regExp = RegExp(r'(\d+\.?\d*)');
+              Match? match = regExp.firstMatch(transaction);
+
+              if (match != null) {
+                String amountString = match.group(0)!;
+                double amount = double.parse(amountString);
+
+                // Asignar tipo de transacción (préstamo o pago)
+                String transactionType =
+                    transaction.split(' ')[0]; // Obtener tipo
+
+                // Definir colores según el tipo de transacción
                 Color tileColor = transactionType == 'Préstamo'
                     ? Colors.green[100]!
                     : Colors.red[100]!;
                 Color textColor =
                     transactionType == 'Préstamo' ? Colors.green : Colors.red;
 
-                // Format amount to show no decimals
+                // Formatear monto para mostrar sin decimales
                 String formattedAmount = amount.toStringAsFixed(0);
 
                 return Card(
@@ -306,70 +313,88 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
                     leading: const Icon(Icons.receipt),
-                    tileColor: tileColor, // Apply color based on type
+                    tileColor: tileColor,
                   ),
                 );
-              },
-            ),
+              } else {
+                // Manejar si no se encuentra un número válido
+                return ListTile(
+                  title: Text('Transacción inválida'),
+                );
+              }
+            },
           ),
+        ),
+      ],
+    ),
+  );
+}
+
+ // Inside the HomeScreen, update the buildServiciosScreen method to include the callback:
+
+Widget buildServiciosScreen() {
+  return Padding(
+    padding: const EdgeInsets.all(16.0),
+    child: Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Text(
+            'Servicios Disponibles',
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 16),
+          buildServiceCard('Hacer Préstamo', Icons.monetization_on, () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => LoanWidget(
+                  onLoanMade: (double loanAmount) {
+                    makeLoan(loanAmount);
+                  },
+                ),
+              ),
+            );
+          }),
+          const SizedBox(height: 16),
+          buildServiceCard('Hacer Pago', Icons.payment, () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => Pagos(
+                  saldoDisponible: currentAmount,
+                  onPagoRealizado: (double pago, String descripcion) {
+                    makePayment(pago);
+                    saveTransaction(
+                        'Pago de \$${pago.toStringAsFixed(2)}: $descripcion');
+                  },
+                ),
+              ),
+            );
+          }),
+          const SizedBox(height: 16),
+          buildServiceCard('Retiros', Icons.attach_money, () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => RetirosScreen(
+                  onRetiroRealizado: (double retiroAmount) {
+                    setState(() {
+                      currentAmount -= retiroAmount; // Deduct amount
+                      saveAmount(); // Save new balance
+                      saveTransaction(
+                          'Retiro de \$${retiroAmount.toStringAsFixed(2)}');
+                    });
+                  },
+                ),
+              ),
+            );
+          }),
         ],
       ),
-    );
-  }
-
-  Widget buildServiciosScreen() {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Center(
-        // Center the Column vertically and horizontally
-        child: Column(
-          mainAxisAlignment:
-              MainAxisAlignment.center, // Center items vertically
-          crossAxisAlignment:
-              CrossAxisAlignment.center, // Center items horizontally
-          children: [
-            const Text(
-              'Servicios Disponibles',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 16),
-            buildServiceCard('Hacer Préstamo', Icons.monetization_on, () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => LoanWidget(
-                    onLoanMade: (double loanAmount) {
-                      makeLoan(loanAmount); // Logic to apply the loan
-                    },
-                  ),
-                ),
-              );
-            }),
-            const SizedBox(height: 16), // Espaciado entre servicios
-            buildServiceCard('Hacer Pago', Icons.payment, () {
-              // Navegar a la pantalla de Pagos
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => Pagos(), // Navega a la clase Pagos
-                ),
-              );
-            }),
-            const SizedBox(height: 16), // Espacio para el botón de retiros
-            buildServiceCard('Retiros', Icons.attach_money, () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) =>
-                      const RetirosScreen(), // Navega a la clase de Retiros
-                ),
-              );
-            }),
-          ],
-        ),
-      ),
-    );
-  }
+    ),
+  );
+}
 
   Widget buildServiceCard(String title, IconData icon, VoidCallback onTap) {
     return Card(
