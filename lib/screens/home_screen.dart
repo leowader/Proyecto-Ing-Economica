@@ -194,9 +194,9 @@ class _HomeScreenState extends State<HomeScreen> {
               crossAxisSpacing: 20,
               padding: const EdgeInsets.all(20.0),
               children: [
-                buildGridItem(context, "Interés Simple", Icons.money, 1),
+                buildGridItem(context, "I. Simple", Icons.money, 1),
                 buildGridItem(
-                    context, "Interés Compuesto", Icons.trending_up, 2),
+                    context, "I. Compuesto", Icons.trending_up, 2),
                 buildGridItem(context, "G. Geométrico", Icons.pie_chart, 3),
                 buildGridItem(context, "G. Aritmético", Icons.calculate, 4),
                 buildGridItem(context, "Amortización", Icons.history, 5),

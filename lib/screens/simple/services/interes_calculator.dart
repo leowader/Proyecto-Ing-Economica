@@ -46,7 +46,7 @@ class InterestCalculator {
       }
       formattedInteger.write(integerPart[i]);
     }
-    return '\$${formattedInteger.toString()},$decimalPart';
+    return '${formattedInteger.toString()},$decimalPart';
   }
 
   DateTime parseDate(String date) {
