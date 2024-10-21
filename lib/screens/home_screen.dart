@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:ingeconomica/screens/RetirosScreen.dart';
 import 'package:ingeconomica/screens/alternativa_inversion/views/evaluacion_alternativa_inversion_views.dart';
+import 'package:ingeconomica/screens/pagos/pagos.dart';
 import 'package:ingeconomica/screens/prestamos/prestamos.dart';
 import 'package:ingeconomica/screens/unidad_valor_real/views/unidad_valor_real_views.dart';
 import 'package:ingeconomica/screens/unidad_valor_real/views/uvr_form.dart';
@@ -80,6 +82,21 @@ class _HomeScreenState extends State<HomeScreen> {
       saveAmount();
       saveTransaction('Pago de \$${amount.toStringAsFixed(2)}');
     });
+
+    // Mostrar un SnackBar con la notificación del pago realizado
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content:
+            Text('Se ha realizado un pago de \$${amount.toStringAsFixed(2)}'),
+        duration: const Duration(seconds: 3), // Duración de la notificación
+        action: SnackBarAction(
+          label: 'OK',
+          onPressed: () {
+            // Acción opcional para el botón de 'OK' en el SnackBar
+          },
+        ),
+      ),
+    );
   }
 
   void _onItemTapped(int index) {
@@ -178,15 +195,18 @@ class _HomeScreenState extends State<HomeScreen> {
               padding: const EdgeInsets.all(20.0),
               children: [
                 buildGridItem(context, "Interés Simple", Icons.money, 1),
-                buildGridItem(context, "Interés Compuesto", Icons.trending_up, 2),
+                buildGridItem(
+                    context, "Interés Compuesto", Icons.trending_up, 2),
                 buildGridItem(context, "G. Geométrico", Icons.pie_chart, 3),
                 buildGridItem(context, "G. Aritmético", Icons.calculate, 4),
                 buildGridItem(context, "Amortización", Icons.history, 5),
                 buildGridItem(context, "Bonos", Icons.attach_money, 6),
                 buildGridItem(context, "Inflación", Icons.trending_down, 7),
                 buildGridItem(context, "TIR", Icons.trending_up, 8),
-                buildGridItem(context, "U.V.R", Icons.monetization_on_outlined, 9),
-                buildGridItem(context, "E.A.I", Icons.account_balance_outlined, 8),
+                buildGridItem(
+                    context, "U.V.R", Icons.monetization_on_outlined, 9),
+                buildGridItem(
+                    context, "E.A.I", Icons.account_balance_outlined, 10),
               ],
             ),
           ),
@@ -214,7 +234,8 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Icon(Icons.account_balance_wallet, size: 40, color: Colors.white),
+            const Icon(Icons.account_balance_wallet,
+                size: 40, color: Colors.white),
             Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
@@ -250,12 +271,17 @@ class _HomeScreenState extends State<HomeScreen> {
               itemCount: transactions.length,
               itemBuilder: (context, index) {
                 String transaction = transactions[index];
-                String transactionType = transaction.split(' ')[0]; // Get type (Loan or Payment)
-                double amount = double.parse(transaction.split('\$')[1]); // Get amount
-                
+                String transactionType =
+                    transaction.split(' ')[0]; // Get type (Loan or Payment)
+                double amount =
+                    double.parse(transaction.split('\$')[1]); // Get amount
+
                 // Define colors based on transaction type
-                Color tileColor = transactionType == 'Préstamo' ? Colors.green[100]! : Colors.red[100]!;
-                Color textColor = transactionType == 'Préstamo' ? Colors.green : Colors.red;
+                Color tileColor = transactionType == 'Préstamo'
+                    ? Colors.green[100]!
+                    : Colors.red[100]!;
+                Color textColor =
+                    transactionType == 'Préstamo' ? Colors.green : Colors.red;
 
                 // Format amount to show no decimals
                 String formattedAmount = amount.toStringAsFixed(0);
@@ -269,7 +295,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         children: [
                           TextSpan(
                             text: '$transactionType de \$',
-                            style: const TextStyle(fontSize: 16, color: Colors.black),
+                            style: const TextStyle(
+                                fontSize: 16, color: Colors.black),
                           ),
                           TextSpan(
                             text: formattedAmount,
@@ -288,41 +315,61 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
       ),
     );
-  }Widget buildServiciosScreen() {
-  return Padding(
-    padding: const EdgeInsets.all(16.0),
-    child: Center( // Center the Column vertically and horizontally
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center, // Center items vertically
-        crossAxisAlignment: CrossAxisAlignment.center, // Center items horizontally
-        children: [
-          const Text(
-            'Servicios Disponibles',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 16),
-          buildServiceCard('Hacer Préstamo', Icons.monetization_on, () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => LoanWidget(
-                  onLoanMade: (double loanAmount) {
-                    makeLoan(loanAmount); // Logic to apply the loan
-                  },
-                ),
-              ),
-            );
-          }),
-          const SizedBox(height: 16), // Add spacing between services
-          buildServiceCard('Hacer Pago', Icons.payment, () {
-            makePayment(50); // Example payment of 50
-          }),
-        ],
-      ),
-    ),
-  );
-}
+  }
 
+  Widget buildServiciosScreen() {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Center(
+        // Center the Column vertically and horizontally
+        child: Column(
+          mainAxisAlignment:
+              MainAxisAlignment.center, // Center items vertically
+          crossAxisAlignment:
+              CrossAxisAlignment.center, // Center items horizontally
+          children: [
+            const Text(
+              'Servicios Disponibles',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 16),
+            buildServiceCard('Hacer Préstamo', Icons.monetization_on, () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => LoanWidget(
+                    onLoanMade: (double loanAmount) {
+                      makeLoan(loanAmount); // Logic to apply the loan
+                    },
+                  ),
+                ),
+              );
+            }),
+            const SizedBox(height: 16), // Espaciado entre servicios
+            buildServiceCard('Hacer Pago', Icons.payment, () {
+              // Navegar a la pantalla de Pagos
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => Pagos(), // Navega a la clase Pagos
+                ),
+              );
+            }),
+            const SizedBox(height: 16), // Espacio para el botón de retiros
+            buildServiceCard('Retiros', Icons.attach_money, () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) =>
+                      const RetirosScreen(), // Navega a la clase de Retiros
+                ),
+              );
+            }),
+          ],
+        ),
+      ),
+    );
+  }
 
   Widget buildServiceCard(String title, IconData icon, VoidCallback onTap) {
     return Card(
@@ -340,7 +387,8 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget buildGridItem(BuildContext context, String title, IconData icon, int optionIndex) {
+  Widget buildGridItem(
+      BuildContext context, String title, IconData icon, int optionIndex) {
     return GestureDetector(
       onTap: () {
         _onOptionTapped(optionIndex); // Change selected option
